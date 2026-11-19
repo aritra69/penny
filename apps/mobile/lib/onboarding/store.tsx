@@ -68,10 +68,26 @@ export function OnboardingProvider({
   }, [loaded]);
 
   const change = useCallback((next: (state: OnboardingState) => OnboardingState) => {
-    setLoaded((current) =>
-      current.userId ? { ...current, state: next(current.state), dirty: true } : current,
-    );
+    setLoaded((current) => {
+      if (!current.userId) return current;
+      const state = next(current.state);
+      return state === current.state ? current : { ...current, state, dirty: true };
+    });
   }, []);
+
+  // Stable, so screens can call them from effects.
+  const update = useCallback(
+    (patch: Partial<OnboardingState>) =>
+      change((state) => {
+        const keys = Object.keys(patch) as (keyof OnboardingState)[];
+        return keys.every((key) => Object.is(state[key], patch[key]))
+          ? state
+          : { ...state, ...patch };
+      }),
+    [change],
+  );
+  const complete = useCallback(() => update({ completed: true }), [update]);
+  const reset = useCallback(() => change(() => initialOnboardingState), [change]);
 
   // State read for another account (or none) is never shown for this one.
   const current = loaded.userId === userId;
@@ -79,11 +95,11 @@ export function OnboardingProvider({
     () => ({
       ready: userId === null || current,
       state: current ? loaded.state : initialOnboardingState,
-      update: (patch) => change((state) => ({ ...state, ...patch })),
-      complete: () => change((state) => ({ ...state, completed: true })),
-      reset: () => change(() => initialOnboardingState),
+      update,
+      complete,
+      reset,
     }),
-    [loaded.state, current, userId, change],
+    [loaded.state, current, userId, update, complete, reset],
   );
 
   return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;
