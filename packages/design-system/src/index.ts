@@ -61,3 +61,8 @@ export { KeyValueRow, SplitStat } from "./components/key-value-row";
 export { BudgetRow } from "./components/budget-row";
 export { StepList } from "./components/step-list";
 export { PaceChart } from "./components/pace-chart";
+
+// Ask Penny and review
+export { AssistantMessage, ChatBubble, ChatComposer } from "./components/chat";
+export { DraftCard } from "./components/draft-card";
+export { ReviewCard } from "./components/review-card";
