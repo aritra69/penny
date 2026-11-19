@@ -85,39 +85,39 @@ Motion confirms what happened; nothing loops, bounces for show or delays reading
 
 ## Components
 
-| Component                                        | Screens                                   | Notes                                                                    |
-| ------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------ |
-| `Text`                                           | all                                       | Variants above; legacy `h1`–`h4`, `muted` map onto them                  |
-| `Icon`                                           | all                                       | 37 line icons copied from the canvas; `iconNames` lists them             |
-| `Wordmark`                                       | splash                                    | "penny" with a square full stop; light or dark                           |
-| `Button`                                         | all                                       | `default`, `outline`, `inverse`, `ghost`, `link` (dotted), `destructive` |
-| `IconButton`                                     | headers, steppers, composer               | `ghost`, `outline`, `solid`; `label` required; optional `dot`            |
-| `ScreenHeader`                                   | every pushed screen and sheet             | back or close, title, step counter, actions                              |
-| `TabBar`, `PENNY_TABS`                           | main screens                              | Black bar, highlighter dot on the current tab                            |
-| `UnderlineTabs`                                  | Spending                                  | Switches views of the same data                                          |
-| `MonthSwitcher`                                  | Spending                                  |                                                                          |
-| `NoticeBar`                                      | Home                                      | One per screen, for what needs the user now                              |
-| `InfoNote`                                       | drafts, details                           | Explains what Penny checked                                              |
-| `ProgressBar`                                    | import, budgets, goals                    | Optional pace tick                                                       |
-| `Amount`, `HiddenAmountsProvider`                | all money                                 | Real minus, lakh grouping for INR, compact "₹3L", hide mode              |
-| `BigFigure`                                      | Home, Spending, Net worth                 |                                                                          |
-| `PaceChart`                                      | Home, Spending                            | Spent line draws in; today column in highlighter                         |
-| `SectionHeader`                                  | Home, Review, Goals                       | Title with a dotted link or a note                                       |
-| `StatBox`                                        | Home, Goals                               | Bordered box with a corner illustration                                  |
-| `ListRow`                                        | Home, Review, Spending, settings          | Flat row between rules                                                   |
-| `KeyValueRow`, `SplitStat`                       | drafts, details                           |                                                                          |
-| `BudgetRow`                                      | Spending, onboarding budgets              | Over budget = full bar + bold status, no red                             |
-| `StepList`                                       | onboarding steps                          | Dark or light                                                            |
-| `TextField`, `Input`, `Label`                    | sign-in, new goal, API key                | Underlined, value set large; label always above. `code` for a pasted key |
-| `AmountField`, `Stepper`                         | edit budget, new goal, onboarding budgets | `Stepper` takes a `value` to show between − and +                        |
-| `Checkbox`, `CheckRow`                           | edit budget, privacy                      |                                                                          |
-| `SelectRow`                                      | onboarding apps and accounts              | Highlighter fill when picked                                             |
-| `StatusRow`                                      | onboarding permissions                    | Reports a switch: highlighter and tick when on, a small button when not  |
-| `ChoiceGroup`, `ChoiceCard`, `PictureChoice`     | new goal, goal draft, review item         | Radio group; 2.5 border + black mark when chosen                         |
-| `LabeledDivider`                                 | sign-in                                   | "or with email"                                                          |
-| `ChatBubble`, `AssistantMessage`, `ChatComposer` | Ask Penny                                 |                                                                          |
-| `DraftCard`                                      | Ask Penny drafts                          | The only way AI output gets saved                                        |
-| `ReviewCard`                                     | Review inbox                              | Penny's guess gets the primary button                                    |
+| Component                                        | Screens                                   | Notes                                                                                                             |
+| ------------------------------------------------ | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `Text`                                           | all                                       | Variants above; legacy `h1`–`h4`, `muted` map onto them                                                           |
+| `Icon`                                           | all                                       | 37 line icons copied from the canvas; `iconNames` lists them                                                      |
+| `Wordmark`                                       | splash                                    | "penny" with a square full stop; light or dark                                                                    |
+| `Button`                                         | all                                       | `default` (grey when disabled, fills with ink when enabled), `outline`, `inverse`, `ghost`, `link`, `destructive` |
+| `IconButton`                                     | headers, steppers, composer               | `ghost`, `outline`, `solid`; `label` required; optional `dot`                                                     |
+| `ScreenHeader`                                   | every pushed screen and sheet             | back or close, title, step counter, actions                                                                       |
+| `TabBar`, `PENNY_TABS`                           | main screens                              | Black bar, highlighter dot on the current tab                                                                     |
+| `UnderlineTabs`                                  | Spending                                  | Switches views of the same data                                                                                   |
+| `MonthSwitcher`                                  | Spending                                  |                                                                                                                   |
+| `NoticeBar`                                      | Home                                      | One per screen, for what needs the user now                                                                       |
+| `InfoNote`                                       | drafts, details                           | Explains what Penny checked                                                                                       |
+| `ProgressBar`                                    | import, budgets, goals                    | Optional pace tick                                                                                                |
+| `Amount`, `HiddenAmountsProvider`                | all money                                 | Real minus, lakh grouping for INR, compact "₹3L", hide mode                                                       |
+| `BigFigure`                                      | Home, Spending, Net worth                 |                                                                                                                   |
+| `PaceChart`                                      | Home, Spending                            | Spent line draws in; today column in highlighter                                                                  |
+| `SectionHeader`                                  | Home, Review, Goals                       | Title with a dotted link or a note                                                                                |
+| `StatBox`                                        | Home, Goals                               | Bordered box with a corner illustration                                                                           |
+| `ListRow`                                        | Home, Review, Spending, settings          | Flat row between rules                                                                                            |
+| `KeyValueRow`, `SplitStat`                       | drafts, details                           |                                                                                                                   |
+| `BudgetRow`                                      | Spending, onboarding budgets              | Over budget = full bar + bold status, no red                                                                      |
+| `StepList`                                       | onboarding steps                          | Dark or light                                                                                                     |
+| `TextField`, `Input`, `Label`                    | sign-in, new goal, API key                | Underlined, value set large; label always above. `code` for a pasted key                                          |
+| `AmountField`, `Stepper`                         | edit budget, new goal, onboarding budgets | `Stepper` takes a `value` to show between − and +                                                                 |
+| `Checkbox`, `CheckRow`                           | edit budget, privacy                      |                                                                                                                   |
+| `SelectRow`                                      | onboarding apps and accounts              | Highlighter fill when picked                                                                                      |
+| `StatusRow`                                      | onboarding permissions                    | Reports a switch: highlighter and tick when on, a small button when not                                           |
+| `ChoiceGroup`, `ChoiceCard`, `PictureChoice`     | new goal, goal draft, review item         | Radio group; 2.5 border + black mark when chosen                                                                  |
+| `LabeledDivider`                                 | sign-in                                   | "or with email"                                                                                                   |
+| `ChatBubble`, `AssistantMessage`, `ChatComposer` | Ask Penny                                 |                                                                                                                   |
+| `DraftCard`                                      | Ask Penny drafts                          | The only way AI output gets saved                                                                                 |
+| `ReviewCard`                                     | Review inbox                              | Penny's guess gets the primary button                                                                             |
 
 ### Not built yet
 
