@@ -5,8 +5,7 @@ import { ActivityIndicator, type TextInputInstance } from "react-native";
 import { AuthScreen, FormError, OrDivider } from "@/components/auth/auth-screen";
 import { FormField } from "@/components/auth/form-field";
 import { GoogleButton } from "@/components/auth/google-button";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { Button, Text } from "@repo/design-system";
 import { authClient } from "@/lib/auth-client";
 import {
   hasErrors,

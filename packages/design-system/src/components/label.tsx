@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../lib/utils";
 import * as LabelPrimitive from "@rn-primitives/label";
 import { Platform } from "react-native";
 
@@ -28,7 +28,7 @@ function Label({
     >
       <LabelPrimitive.Text
         className={cn(
-          "text-sm font-medium text-foreground",
+          "font-sans-semibold text-caption text-foreground",
           Platform.select({ web: "leading-none" }),
           className,
         )}

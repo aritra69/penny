@@ -1,8 +1,6 @@
 import { View } from "react-native";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Text } from "@/components/ui/text";
+import { Input, Label, Text } from "@repo/design-system";
 
 type FormFieldProps = React.ComponentProps<typeof Input> & {
   label: string;
