@@ -12,8 +12,7 @@ Open-source personal finance app (working name). Android-first Expo app, a Bun A
 | `apps/api`                                             | Auth + CRUD backend (`/api/auth/*`, `/transactions`) | Bun.serve routes, Drizzle ORM, SQLite (`bun:sqlite`)                                               |
 | `apps/web`, `apps/docs`                                | Web apps (still the create-turbo starters)           | Next.js 16                                                                                         |
 | `packages/design-system`                               | Penny's design system: tokens, components, motion    | React Native, NativeWind preset, Moti (Framer Motion's API on Reanimated), react-native-svg        |
-| `packages/ui`                                          | Shared React components for web/docs                 | React                                                                                              |
-| `packages/eslint-config`, `packages/typescript-config` | Shared configs for web/docs/ui                       | —                                                                                                  |
+| `packages/eslint-config`, `packages/typescript-config` | Shared configs for web/docs/api                      | —                                                                                                  |
 
 Before working in `apps/mobile`, read `apps/mobile/AGENTS.md` (Expo's own rules: use `expo install` for deps, never hand-edit `ios/`/`android/`, check versioned Expo docs instead of memory).
 
@@ -32,7 +31,7 @@ bun run build
 bun run format        # Prettier, whole repo (format:check to verify)
 ```
 
-Scope to one workspace with `bunx turbo run <task> --filter=<name>` (`mobile`, `api`, `web`, `docs`, `@repo/design-system`, `@repo/ui`).
+Scope to one workspace with `bunx turbo run <task> --filter=<name>` (`mobile`, `api`, `web`, `docs`, `@repo/design-system`).
 
 Per app:
 
@@ -69,9 +68,9 @@ Run tests, lint and typecheck before calling work done.
 ## Don't "fix" these — they're load-bearing
 
 - `bunfig.toml` uses `linker = "hoisted"`. NativeWind/Metro/Babel can't resolve their deps with bun's isolated installs.
-- The root dev-dependency `typescript@~6.0.3` exists only to control hoisting. typescript-eslint (used by both ESLint setups) doesn't support TS 7, and resolves the hoisted root copy. web/docs/api/ui keep their own TS 7.0.2 for `tsc`. Raise the root pin only once typescript-eslint supports TS 7.
+- The root dev-dependency `typescript@~6.0.3` exists only to control hoisting. typescript-eslint (used by both ESLint setups) doesn't support TS 7, and resolves the hoisted root copy. web/docs/api keep their own TS 7.0.2 for `tsc`. Raise the root pin only once typescript-eslint supports TS 7.
 - Nothing may pull Babel 8 into the root `node_modules`. Expo's Babel plugins require Babel 7; the shared ESLint config used to bring in Babel 8, which is why it no longer uses the Babel parser.
-- **React must be the same version in every workspace** (currently 19.3.0, Expo SDK 58's). A second copy builds fine but crashes the app at runtime. When upgrading Expo, bump `react`, `react-dom` and `@types/react*` in web, docs and ui too, then check `bunx expo-doctor` (from `apps/mobile`) for duplicates.
+- **React must be the same version in every workspace** (currently 19.3.0, Expo SDK 58's). A second copy builds fine but crashes the app at runtime. When upgrading Expo, bump `react`, `react-dom` and `@types/react*` in web and docs too, then check `bunx expo-doctor` (from `apps/mobile`) for duplicates.
 - `apps/mobile/vitest.config.mts` is `.mts` because the package is CommonJS (its Babel/Metro configs need that).
 
 ## Auth

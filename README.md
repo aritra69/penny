@@ -20,7 +20,6 @@ A Turborepo monorepo, managed with [Bun](https://bun.sh).
 | `apps/api`                                             | Auth and data API: Bun, Better Auth (email + Google), Drizzle, SQLite                    |
 | `packages/design-system`                               | Penny's look: tokens, components and motion ([README](packages/design-system/README.md)) |
 | `apps/web`, `apps/docs`                                | Next.js apps, still the starter templates                                                |
-| `packages/ui`                                          | Shared React components for the web apps                                                 |
 | `packages/eslint-config`, `packages/typescript-config` | Shared lint and TypeScript settings                                                      |
 
 ## Getting started
