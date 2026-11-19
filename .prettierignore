@@ -1,0 +1,12 @@
+# Generated / vendored
+bun.lock
+skills-lock.json
+.agents/
+.claude/skills/
+.husky/_/
+**/drizzle/meta/
+**/.next/
+**/.expo/
+**/dist/
+**/.turbo/
+.impeccable/

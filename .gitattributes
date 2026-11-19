@@ -1,0 +1,18 @@
+# Normalise line endings to LF in the repo.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.sqlite binary
+
+# Lockfiles: don't render diffs, resolve merges by regenerating.
+bun.lock linguist-generated=true -diff
