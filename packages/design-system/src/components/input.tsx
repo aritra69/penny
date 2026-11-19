@@ -7,7 +7,8 @@ import { cn } from "../lib/utils";
 
 /**
  * Penny's text input: no box, the value set large and bold on an ink underline.
- * "field" for words (email, goal name) · "amount" for money, in the display face.
+ * "field" for words (email, goal name) · "amount" for money, in the display face ·
+ * "code" for one long pasted value (an API key), in the display face.
  */
 const inputVariants = cva(
   cn(
@@ -19,6 +20,7 @@ const inputVariants = cva(
       variant: {
         field: "pb-2 pt-1.5 font-sans-bold text-field",
         amount: "pb-1.5 font-display text-figure-lg",
+        code: "pb-2 pt-1.5 font-display text-[30px] leading-9",
       },
     },
     defaultVariants: { variant: "field" },
