@@ -5,10 +5,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, Text } from "@repo/design-system";
 import { authClient } from "@/lib/auth-client";
+import { useOnboarding } from "@/lib/onboarding/store";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { data: session } = authClient.useSession();
+  const { reset } = useOnboarding();
   const [signingOut, setSigningOut] = useState(false);
 
   async function signOut() {
@@ -33,6 +35,11 @@ export default function HomeScreen() {
               <Text>Open the design system gallery</Text>
             </Button>
           </Link>
+        ) : null}
+        {__DEV__ ? (
+          <Button variant="link" size="sm" className="self-center" onPress={reset}>
+            <Text>Run setup again</Text>
+          </Button>
         ) : null}
         <Button variant="outline" size="lg" disabled={signingOut} onPress={signOut}>
           <Text>Sign out</Text>

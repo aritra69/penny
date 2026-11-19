@@ -3,7 +3,7 @@ import * as React from "react";
 import { type Pressable, View } from "react-native";
 import Svg, { Line } from "react-native-svg";
 
-import { AnimatedPressable } from "./motion";
+import { AnimatedPressable, MotiView } from "./motion";
 import { TextClassContext } from "./text";
 import { useMotion } from "../lib/motion";
 import { colors } from "../lib/theme";
@@ -71,15 +71,30 @@ function Button({ className, variant, size, disabled, children, ...props }: Butt
   const motion = useMotion();
   const [pressed, setPressed] = React.useState(false);
   const isLink = variant === "link";
+  // The primary button is grey until it can be used, then ink fills it from the left.
+  const fills = !variant || variant === "default";
 
   return (
-    <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
+    <TextClassContext.Provider
+      value={cn(
+        buttonTextVariants({ variant, size }),
+        fills && disabled && "text-muted-foreground",
+      )}
+    >
       <AnimatedPressable
         role="button"
         aria-disabled={!!disabled}
         disabled={disabled}
-        className={cn(buttonVariants({ variant, size }), disabled && "opacity-35", className)}
-        animate={{ scale: pressed && !isLink ? 0.97 : 1, opacity: pressed && isLink ? 0.55 : 1 }}
+        className={cn(
+          buttonVariants({ variant, size }),
+          fills && "overflow-hidden bg-line-muted",
+          className,
+        )}
+        animate={{
+          scale: pressed && !isLink ? 0.97 : 1,
+          // Set here, not with a class: this animated opacity would override one.
+          opacity: disabled && !fills ? 0.35 : pressed && isLink ? 0.55 : 1,
+        }}
         transition={motion.press}
         onPressIn={(e) => {
           setPressed(true);
@@ -91,6 +106,17 @@ function Button({ className, variant, size, disabled, children, ...props }: Butt
         }}
         {...props}
       >
+        {fills ? (
+          <MotiView
+            aria-hidden
+            pointerEvents="none"
+            animate={{ scaleX: disabled ? 0 : 1 }}
+            // The sweep is for becoming usable; going back to grey is quick.
+            transition={disabled ? motion.press : motion.fill}
+            className="absolute inset-0 bg-primary"
+            style={{ transformOrigin: "left" }}
+          />
+        ) : null}
         {isLink ? <DottedUnderline>{children}</DottedUnderline> : children}
       </AnimatedPressable>
     </TextClassContext.Provider>

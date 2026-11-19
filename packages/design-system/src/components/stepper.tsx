@@ -2,6 +2,7 @@ import * as React from "react";
 import { View } from "react-native";
 
 import { IconButton } from "./icon-button";
+import { Text } from "./text";
 
 type StepperProps = {
   onDecrease: () => void;
@@ -11,6 +12,8 @@ type StepperProps = {
   increaseLabel: string;
   canDecrease?: boolean;
   canIncrease?: boolean;
+  /** The number being nudged, shown between the buttons: "₹8,000". */
+  value?: string;
 };
 
 /** Two square outlined buttons, − and +, for nudging a number by a fixed step. */
@@ -21,9 +24,10 @@ export function Stepper({
   increaseLabel,
   canDecrease = true,
   canIncrease = true,
+  value,
 }: StepperProps) {
   return (
-    <View className="flex-row gap-2.5">
+    <View className="flex-row items-center gap-2.5">
       <IconButton
         icon="minus"
         variant="outline"
@@ -31,6 +35,11 @@ export function Stepper({
         onPress={onDecrease}
         disabled={!canDecrease}
       />
+      {value !== undefined ? (
+        <Text aria-live="polite" className="w-[74px] text-center font-sans-bold text-body-lg">
+          {value}
+        </Text>
+      ) : null}
       <IconButton
         icon="plus"
         variant="outline"

@@ -18,6 +18,7 @@ export { AnimatedPressable, AnimatePresence, MotiText, MotiView } from "./compon
 // Foundations
 export { Text, TextClassContext, textVariants, type TextVariant } from "./components/text";
 export { Icon, iconNames, type IconName } from "./components/icon";
+export { Wordmark } from "./components/wordmark";
 
 // Actions
 export {
@@ -50,6 +51,7 @@ export { MonthSwitcher } from "./components/month-switcher";
 export { NoticeBar } from "./components/notice-bar";
 export { InfoNote } from "./components/info-note";
 export { ProgressBar } from "./components/progress-bar";
+export { StatusRow } from "./components/status-row";
 
 // Data display
 export { Amount, HiddenAmountsProvider, useAmountsHidden } from "./components/amount";

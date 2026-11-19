@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ActivityIndicator } from "react-native";
 
-import { Button, Text } from "@repo/design-system";
+import { Button, colors, Icon, Text } from "@repo/design-system";
 import { authClient } from "@/lib/auth-client";
 
 type GoogleButtonProps = {
@@ -35,7 +35,11 @@ export function GoogleButton({ disabled, onError }: GoogleButtonProps) {
 
   return (
     <Button variant="outline" size="lg" disabled={disabled || loading} onPress={signIn}>
-      {loading ? <ActivityIndicator size="small" /> : null}
+      {loading ? (
+        <ActivityIndicator size="small" color={colors.ink} />
+      ) : (
+        <Icon name="google" size={20} />
+      )}
       <Text>Continue with Google</Text>
     </Button>
   );
