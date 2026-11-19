@@ -67,7 +67,8 @@ About 3 minutes, and the user can stop and come back. Steps 1 to 5 show a "n / 5
 flowchart TD
     Splash --> Welcome[Welcome and sign in]
     Welcome --> Privacy[Privacy promise: agree to terms]
-    Privacy --> Steps[Set up Penny in 5 steps]
+    Privacy --> Gender[Pick a figure: female or male]
+    Gender --> Steps[Set up Penny in 5 steps]
     Steps --> Key[1. Paste OpenAI key] --> KeyOk[Key works]
     KeyOk --> Apps[2. Pick apps to read]
     Apps --> Perms[3. Notification access and bank SMS]
@@ -82,14 +83,15 @@ flowchart TD
 
 1. **Splash**, then **Welcome**: "Know where your money goes, without typing a thing." Continue with Google, or email and password (log in, create account, forgot password).
 2. **Privacy promise**: the principles above in plain words. The user ticks "I've read this and the terms" and taps Agree and continue.
-3. **Setup steps**: an overview of the five steps.
-4. **OpenAI key** (1/5): paste the key, tap Check key. Penny makes a test call and shows the model and latency ("Your key works"). The key is stored encrypted on the phone, never logged or backed up. Cost is under a paisa per message, paid to OpenAI directly.
-5. **Apps to read** (2/5): toggles for detected banking, UPI and investment apps (e.g. HDFC Bank, YONO SBI, Google Pay, PhonePe, Groww, CRED) and for bank SMS. A "Never read" box lists what is always excluded.
-6. **Alerts and SMS** (3/5): grant notification access, then SMS. For sideloaded installs Android blocks SMS until the user allows restricted settings in App info, so the screen walks through those 3 steps. A third row asks for unrestricted battery so Android doesn't kill Penny.
-7. **Your accounts** (4/5): bank accounts, cards and UPI IDs Penny found, with last balances. The user confirms which are theirs, flags unsure ones and adds missed ones. This is what lets Penny treat money between them as a transfer, not spending or income.
-8. **Import history** (5/5): read the last 6 months of bank SMS, with live counts (messages read, transactions found, codes dropped). It can keep going in the background, or the user can skip and start from today.
-9. **Starting budgets**: one budget per main category from the 6-month average, rounded up a little, plus the month's total split into bills and everything else. The user edits, accepts or sets them later.
-10. **All set**, then Home.
+3. **Gender**: the user picks one of two figures, female or male. Saved on the phone with the rest of setup. Not one of the five numbered steps.
+4. **Setup steps**: an overview of the five steps.
+5. **OpenAI key** (1/5): paste the key, tap Check key. Penny makes a test call and shows the model and latency ("Your key works"). The key is stored encrypted on the phone, never logged or backed up. Cost is under a paisa per message, paid to OpenAI directly.
+6. **Apps to read** (2/5): toggles for detected banking, UPI and investment apps (e.g. HDFC Bank, YONO SBI, Google Pay, PhonePe, Groww, CRED) and for bank SMS. A "Never read" box lists what is always excluded.
+7. **Alerts and SMS** (3/5): grant notification access, then SMS. For sideloaded installs Android blocks SMS until the user allows restricted settings in App info, so the screen walks through those 3 steps. A third row asks for unrestricted battery so Android doesn't kill Penny.
+8. **Your accounts** (4/5): bank accounts, cards and UPI IDs Penny found, with last balances. The user confirms which are theirs, flags unsure ones and adds missed ones. This is what lets Penny treat money between them as a transfer, not spending or income.
+9. **Import history** (5/5): read the last 6 months of bank SMS, with live counts (messages read, transactions found, codes dropped). It can keep going in the background, or the user can skip and start from today.
+10. **Starting budgets**: one budget per main category from the 6-month average, rounded up a little, plus the month's total split into bills and everything else. The user edits, accepts or sets them later.
+11. **All set**, then Home.
 
 ### 2. Everyday: payments sort themselves
 
