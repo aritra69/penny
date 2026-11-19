@@ -43,3 +43,14 @@ export { MonthSwitcher } from "./components/month-switcher";
 export { NoticeBar } from "./components/notice-bar";
 export { InfoNote } from "./components/info-note";
 export { ProgressBar } from "./components/progress-bar";
+
+// Data display
+export { Amount, HiddenAmountsProvider, useAmountsHidden } from "./components/amount";
+export { BigFigure } from "./components/big-figure";
+export { SectionHeader } from "./components/section-header";
+export { StatBox } from "./components/stat-box";
+export { ListRow } from "./components/list-row";
+export { KeyValueRow, SplitStat } from "./components/key-value-row";
+export { BudgetRow } from "./components/budget-row";
+export { StepList } from "./components/step-list";
+export { PaceChart } from "./components/pace-chart";
