@@ -50,6 +50,7 @@ describe("parseOnboardingState", () => {
       step: "budgets",
       completed: false,
       privacyAgreedAt: "2026-11-19T10:00:00.000Z",
+      gender: "female",
       keyCheck: { model: "gpt-test", latencyMs: 812 },
       sources: ["hdfc", "sms"],
       accounts: { mine: ["hdfc-1234"], added: [{ id: "a1", label: "ICICI ••4321" }] },
@@ -66,6 +67,7 @@ describe("parseOnboardingState", () => {
         step: "nowhere",
         completed: "yes",
         privacyAgreedAt: "2026-11-19T10:00:00.000Z",
+        gender: "other",
         keyCheck: { model: 3 },
         sources: ["hdfc", 4],
         accounts: { mine: ["x"], added: [{ id: "a" }, { id: "b", label: "B" }] },
@@ -76,6 +78,7 @@ describe("parseOnboardingState", () => {
     expect(parsed.step).toBe("privacy");
     expect(parsed.completed).toBe(false);
     expect(parsed.privacyAgreedAt).toBe("2026-11-19T10:00:00.000Z");
+    expect(parsed.gender).toBeNull();
     expect(parsed.keyCheck).toBeNull();
     expect(parsed.sources).toBeNull();
     expect(parsed.accounts).toEqual({ mine: ["x"], added: [{ id: "b", label: "B" }] });
@@ -90,6 +93,7 @@ describe("resumeStep", () => {
     expect(resumeStep({ ...agreed, keyCheck, step: "accounts" })).toBe("accounts");
     expect(resumeStep({ ...agreed, keyCheck, step: "key-ok" })).toBe("key-ok");
     expect(resumeStep({ ...agreed, step: "steps" })).toBe("steps");
+    expect(resumeStep({ ...agreed, step: "gender" })).toBe("gender");
   });
 
   it("goes back to the promise until it is agreed", () => {

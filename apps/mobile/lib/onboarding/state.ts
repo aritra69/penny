@@ -6,6 +6,7 @@
 /** Screens after sign-in, in order. Each name is also its route (`/key`, `/apps`, …). */
 export const ONBOARDING_STEPS = [
   "privacy",
+  "gender",
   "steps",
   "key",
   "key-ok",
@@ -50,6 +51,8 @@ export type AccountChoices = {
 export type BudgetChoices =
   { status: "set"; currency: string; amounts: Record<string, number> } | { status: "later" };
 
+export type Gender = "female" | "male";
+
 export type OnboardingState = {
   version: 1;
   /** The screen the user was last on. */
@@ -57,6 +60,8 @@ export type OnboardingState = {
   completed: boolean;
   /** ISO 8601 UTC time the user agreed to the privacy promise and terms. */
   privacyAgreedAt: string | null;
+  /** Which of the two figures the user picked. null until they have. */
+  gender: Gender | null;
   keyCheck: KeyCheck | null;
   /** Ids of the apps (and "sms") Penny may read. null until the user has seen the list. */
   sources: string[] | null;
@@ -72,6 +77,7 @@ export const initialOnboardingState: OnboardingState = {
   step: "privacy",
   completed: false,
   privacyAgreedAt: null,
+  gender: null,
   keyCheck: null,
   sources: null,
   accounts: null,
@@ -135,6 +141,7 @@ export function parseOnboardingState(raw: string | null | undefined): Onboarding
     step: isStep(data.step) ? data.step : "privacy",
     completed: data.completed === true,
     privacyAgreedAt: typeof data.privacyAgreedAt === "string" ? data.privacyAgreedAt : null,
+    gender: data.gender === "female" || data.gender === "male" ? data.gender : null,
     keyCheck: parseKeyCheck(data.keyCheck),
     sources: isStringArray(data.sources) ? data.sources : null,
     accounts: parseAccounts(data.accounts),

@@ -32,7 +32,7 @@ export default function PrivacyScreen() {
 
   function agree() {
     update({ privacyAgreedAt: state.privacyAgreedAt ?? new Date().toISOString() });
-    router.push("/steps");
+    router.push("/gender");
   }
 
   return (
