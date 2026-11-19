@@ -1,24 +1,47 @@
-import { cn } from "../lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 import { Platform, TextInput } from "react-native";
 
-function Input({ className, ...props }: React.ComponentProps<typeof TextInput>) {
+import { colors } from "../lib/theme";
+import { cn } from "../lib/utils";
+
+/**
+ * Penny's text input: no box, the value set large and bold on an ink underline.
+ * "field" for words (email, goal name) · "amount" for money, in the display face.
+ */
+const inputVariants = cva(
+  cn(
+    "w-full min-w-0 border-b-2.5 border-foreground bg-transparent px-0 text-foreground",
+    Platform.select({ web: "outline-none" }),
+  ),
+  {
+    variants: {
+      variant: {
+        field: "pb-2 pt-1.5 font-sans-bold text-field",
+        amount: "pb-1.5 font-display text-figure-lg",
+      },
+    },
+    defaultVariants: { variant: "field" },
+  },
+);
+
+type InputProps = React.ComponentProps<typeof TextInput> &
+  VariantProps<typeof inputVariants> & {
+    /** Draws the underline in the error colour. TextField sets it from `error`. */
+    "aria-invalid"?: boolean;
+  };
+
+function Input({ className, variant, editable, ...props }: InputProps) {
   return (
     <TextInput
+      editable={editable}
+      placeholderTextColor={colors.mutedText}
+      selectionColor={colors.ink}
+      cursorColor={colors.ink}
       className={cn(
-        "flex h-10 w-full min-w-0 flex-row items-center rounded-md border border-input bg-background px-3 py-1 text-base leading-5 text-foreground shadow-sm shadow-black/5 dark:bg-input/30 sm:h-9",
-        props.editable === false &&
-          cn(
-            "opacity-50",
-            Platform.select({ web: "disabled:pointer-events-none disabled:cursor-not-allowed" }),
-          ),
-        Platform.select({
-          web: cn(
-            "outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground md:text-sm",
-            "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-          ),
-          native: "placeholder:text-muted-foreground/50",
-        }),
+        inputVariants({ variant }),
+        editable === false && "opacity-50",
+        props["aria-invalid"] && "border-destructive",
         className,
       )}
       {...props}
@@ -26,4 +49,5 @@ function Input({ className, ...props }: React.ComponentProps<typeof TextInput>) 
   );
 }
 
-export { Input };
+export { Input, inputVariants };
+export type { InputProps };
