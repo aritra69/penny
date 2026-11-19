@@ -89,6 +89,7 @@ Motion confirms what happened; nothing loops, bounces for show or delays reading
 | ------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------ |
 | `Text`                                           | all                                       | Variants above; legacy `h1`–`h4`, `muted` map onto them                  |
 | `Icon`                                           | all                                       | 37 line icons copied from the canvas; `iconNames` lists them             |
+| `Wordmark`                                       | splash                                    | "penny" with a square full stop; light or dark                           |
 | `Button`                                         | all                                       | `default`, `outline`, `inverse`, `ghost`, `link` (dotted), `destructive` |
 | `IconButton`                                     | headers, steppers, composer               | `ghost`, `outline`, `solid`; `label` required; optional `dot`            |
 | `ScreenHeader`                                   | every pushed screen and sheet             | back or close, title, step counter, actions                              |
@@ -107,10 +108,11 @@ Motion confirms what happened; nothing loops, bounces for show or delays reading
 | `KeyValueRow`, `SplitStat`                       | drafts, details                           |                                                                          |
 | `BudgetRow`                                      | Spending, onboarding budgets              | Over budget = full bar + bold status, no red                             |
 | `StepList`                                       | onboarding steps                          | Dark or light                                                            |
-| `TextField`, `Input`, `Label`                    | sign-in, new goal, API key                | Underlined, value set large; label always above                          |
-| `AmountField`, `Stepper`                         | edit budget, new goal, onboarding budgets |                                                                          |
+| `TextField`, `Input`, `Label`                    | sign-in, new goal, API key                | Underlined, value set large; label always above. `code` for a pasted key |
+| `AmountField`, `Stepper`                         | edit budget, new goal, onboarding budgets | `Stepper` takes a `value` to show between − and +                        |
 | `Checkbox`, `CheckRow`                           | edit budget, privacy                      |                                                                          |
 | `SelectRow`                                      | onboarding apps and accounts              | Highlighter fill when picked                                             |
+| `StatusRow`                                      | onboarding permissions                    | Reports a switch: highlighter and tick when on, a small button when not  |
 | `ChoiceGroup`, `ChoiceCard`, `PictureChoice`     | new goal, goal draft, review item         | Radio group; 2.5 border + black mark when chosen                         |
 | `LabeledDivider`                                 | sign-in                                   | "or with email"                                                          |
 | `ChatBubble`, `AssistantMessage`, `ChatComposer` | Ask Penny                                 |                                                                          |
@@ -122,7 +124,7 @@ Motion confirms what happened; nothing loops, bounces for show or delays reading
 - **Bills calendar** (month grid with due-day dots) and **bill rows** from Bills / Bill detail.
 - **Detail charts** on Category, Goal detail, Holding and Net worth (bar and value-over-time charts).
 - **Illustrations.** The hero, goal and box pictures live in the design canvas; `StatBox` and `PictureChoice` take an image source once they're added to `apps/mobile/assets`.
-- **Splash wordmark** and app icon in Penny's style.
+- **App icon** in Penny's style.
 
 ## Writing
 

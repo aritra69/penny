@@ -13,6 +13,7 @@ import { DraftCard } from "./components/draft-card";
 import { Icon, iconNames } from "./components/icon";
 import { IconButton } from "./components/icon-button";
 import { InfoNote } from "./components/info-note";
+import { Input } from "./components/input";
 import { KeyValueRow, SplitStat } from "./components/key-value-row";
 import { LabeledDivider } from "./components/labeled-divider";
 import { ListRow } from "./components/list-row";
@@ -25,12 +26,14 @@ import { ScreenHeader } from "./components/screen-header";
 import { SectionHeader } from "./components/section-header";
 import { SelectRow } from "./components/select-row";
 import { StatBox } from "./components/stat-box";
+import { StatusRow } from "./components/status-row";
 import { StepList } from "./components/step-list";
 import { Stepper } from "./components/stepper";
 import { PENNY_TABS, TabBar } from "./components/tab-bar";
 import { Text } from "./components/text";
 import { TextField } from "./components/text-field";
 import { UnderlineTabs } from "./components/underline-tabs";
+import { Wordmark } from "./components/wordmark";
 import { accentOptions, colors } from "./lib/theme";
 
 const noop = () => {};
@@ -54,6 +57,8 @@ export function DesignSystemGallery() {
   const [budget, setBudget] = React.useState(8000);
   const [email, setEmail] = React.useState("you@example.com");
   const [message, setMessage] = React.useState("");
+  const [apiKey, setApiKey] = React.useState("");
+  const [batteryFixed, setBatteryFixed] = React.useState(false);
 
   return (
     <HiddenAmountsProvider hidden={hidden}>
@@ -104,6 +109,13 @@ export function DesignSystemGallery() {
             <Text variant="caption">Food · today</Text>
             <Text variant="small">61% of ₹3L</Text>
             <Text variant="micro">even pace</Text>
+          </Section>
+
+          <Section title="Wordmark">
+            <Wordmark />
+            <View className="items-start bg-primary p-4">
+              <Wordmark size={28} tone="dark" />
+            </View>
           </Section>
 
           <Section title="Icons">
@@ -324,6 +336,26 @@ export function DesignSystemGallery() {
                 onIncrease={noop}
               />
             </View>
+            <View className="flex-row items-center justify-between">
+              <Text variant="strong">Groceries</Text>
+              <Stepper
+                value={`₹${budget.toLocaleString("en-IN")}`}
+                decreaseLabel="Less for Groceries"
+                increaseLabel="More for Groceries"
+                onDecrease={() => setBudget((b) => Math.max(500, b - 500))}
+                onIncrease={() => setBudget((b) => b + 500)}
+                canDecrease={budget > 500}
+              />
+            </View>
+            <Input
+              variant="code"
+              aria-label="OpenAI API key"
+              placeholder="sk-..."
+              value={apiKey}
+              onChangeText={setApiKey}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
             <View className="flex-row items-center gap-3">
               <Checkbox
                 checked={checked}
@@ -429,6 +461,19 @@ export function DesignSystemGallery() {
               question="Penny couldn’t tell who this was. Probably shopping."
               onOpen={noop}
             />
+          </Section>
+
+          <Section title="Status rows">
+            <View>
+              <StatusRow title="Notification access" subtitle="Allowed" done />
+              <StatusRow
+                divider
+                title="Battery: Unrestricted"
+                subtitle={batteryFixed ? "Allowed" : "So Android doesn't put Penny to sleep"}
+                done={batteryFixed}
+                action={{ label: "Fix", onPress: () => setBatteryFixed(true) }}
+              />
+            </View>
           </Section>
 
           <Section title="Onboarding steps" bleed>
