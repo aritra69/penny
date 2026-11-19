@@ -26,7 +26,11 @@ export default function KeyWorksScreen() {
         </Button>
       }
     >
-      <IllustrationSlot height={233} className="mt-16" />
+      <IllustrationSlot
+        source={require("@/assets/illustrations/hero-key.png")}
+        height={233}
+        className="mt-16"
+      />
       <ResultIntro title="Your key works">
         Reached {model} in {formatLatency(latencyMs)}. It&apos;s saved encrypted on this phone.
       </ResultIntro>

@@ -20,7 +20,11 @@ export default function AllSetScreen() {
         </Button>
       }
     >
-      <IllustrationSlot height={233} className="mt-16" />
+      <IllustrationSlot
+        source={require("@/assets/illustrations/hero-done.png")}
+        height={233}
+        className="mt-16"
+      />
       <ResultIntro title="You're all set">
         New payments sort themselves as they arrive. Your budgets are ready to check, and you can
         change anything in Settings.

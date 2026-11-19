@@ -15,8 +15,11 @@ import {
 } from "@/lib/auth-validation";
 import { Button, colors, LabeledDivider, Text, TextField } from "@repo/design-system";
 
-/** The picture above the headline. Swap the file here to change it. */
-const HERO = require("@/assets/illustrations/hero-street.webp");
+/** The picture above the headline, one per mode. Swap a file here to change it. */
+const HERO = {
+  "sign-in": require("@/assets/illustrations/hero-login.png"),
+  "sign-up": require("@/assets/illustrations/hero-signup.png"),
+};
 /** The design's height, and the most of a short screen it may take so the form stays in view. */
 const HERO_HEIGHT = 220;
 const HERO_MAX_SHARE = 0.26;
@@ -90,7 +93,7 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
         </>
       }
     >
-      <IllustrationSlot source={HERO} height={heroHeight} className="mt-5" />
+      <IllustrationSlot source={HERO[mode]} height={heroHeight} className="mt-5" />
       <View className="gap-2.5 px-gutter pt-6">
         <Text variant="title">Know where your money goes, without typing a thing.</Text>
         <Text>
