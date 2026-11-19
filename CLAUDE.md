@@ -11,6 +11,7 @@ Open-source personal finance app (working name). Android-first Expo app, a Bun A
 | `apps/mobile`                                          | The app                                              | Expo SDK 58, React Native 0.88, NativeWind 4 (Tailwind v3), React Native Reusables (shadcn for RN) |
 | `apps/api`                                             | Auth + CRUD backend (`/api/auth/*`, `/transactions`) | Bun.serve routes, Drizzle ORM, SQLite (`bun:sqlite`)                                               |
 | `apps/web`, `apps/docs`                                | Web apps (still the create-turbo starters)           | Next.js 16                                                                                         |
+| `packages/design-system`                               | Penny's design system: tokens, components, motion    | React Native, NativeWind preset, Moti (Framer Motion's API on Reanimated), react-native-svg        |
 | `packages/ui`                                          | Shared React components for web/docs                 | React                                                                                              |
 | `packages/eslint-config`, `packages/typescript-config` | Shared configs for web/docs/ui                       | —                                                                                                  |
 
@@ -24,14 +25,14 @@ From the root (Turborepo runs each workspace's script):
 
 ```bash
 bun run dev           # all dev servers (Expo, API on :4000, web :3000, docs :3001)
-bun run test          # Vitest (mobile) + bun test (api)
+bun run test          # Vitest (mobile, design-system) + bun test (api)
 bun run lint
 bun run check-types
 bun run build
 bun run format        # Prettier, whole repo (format:check to verify)
 ```
 
-Scope to one workspace with `bunx turbo run <task> --filter=<name>` (`mobile`, `api`, `web`, `docs`, `@repo/ui`).
+Scope to one workspace with `bunx turbo run <task> --filter=<name>` (`mobile`, `api`, `web`, `docs`, `@repo/design-system`, `@repo/ui`).
 
 Per app:
 
@@ -42,9 +43,9 @@ Run tests, lint and typecheck before calling work done.
 
 ## Formatting, linting, hooks, CI
 
-- **Prettier**: root `.prettierrc` (print width 100) for the repo, plus `apps/mobile/.prettierrc`, which adds Tailwind class sorting. Generated files are listed in `.prettierignore`.
+- **Prettier**: root `.prettierrc` (print width 100) for the repo, plus `apps/mobile/.prettierrc` and `packages/design-system/.prettierrc`, which add Tailwind class sorting. Generated files are listed in `.prettierignore`.
 - **ESLint**: every workspace's `lint` fails on any warning.
-  - **mobile**: Expo's config (`eslint-config-expo`) with Prettier.
+  - **mobile** and **design-system**: Expo's config (`eslint-config-expo`) with Prettier.
   - **Everything else**: `@repo/eslint-config`, built on typescript-eslint and not type-aware. The rules require `import type` for type-only imports, and allow unused variables only when prefixed with `_`. ESLint 10 only lints `.ts`/`.tsx` because typescript-eslint's config lists them.
 - **Git hooks (Husky)**: `bun install` runs `prepare`, which installs them.
   - **pre-commit**: lint-staged runs `eslint --fix` and Prettier on staged files. Each workspace has its own `.lintstagedrc.json`, run from that folder. Root files only get Prettier (`lint-staged.config.mjs`, which skips symlinks like `.claude/skills/*` because Prettier errors on them).
@@ -57,10 +58,12 @@ Run tests, lint and typecheck before calling work done.
 - **Money**: integers in minor units (paise/cents), negative = money out, with an ISO 4217 `currency`. Never floats.
 - **Dates**: ISO 8601, stored in UTC.
 - **IDs**: UUIDs (`crypto.randomUUID()`).
-- **Mobile styling**: NativeWind `className` with the theme tokens in `global.css` / `tailwind.config.js` (`bg-background`, `text-foreground`, `text-muted-foreground`, …), not raw colours. Merge classes with `cn()` from `@/lib/utils`. Imports use the `@/` alias.
-- **Mobile UI components** live in `apps/mobile/components/ui`. The Reusables CLI (`add`) fails in this repo because it shells out to npm. Instead, fetch `https://reactnativereusables.com/r/nativewind/<name>.json`, write each file's `content` into `components/ui/`, rewrite `@/registry/nativewind/` imports to `@/`, and `bunx expo install` its `dependencies`.
+- **Design system**: everything visual lives in `packages/design-system` (`@repo/design-system`); read its `README.md` before building UI. Tokens are CSS variables in its `global.css` (Metro compiles it via `require.resolve`), the type scale and token classes in `tailwind-preset.js`, hex mirrors for SVG/animation in `src/lib/theme.ts`. Apps import components, `cn()`, `formatMoney()` and `useMotion()` from `@repo/design-system`, never deep paths.
+- **Mobile styling**: NativeWind `className` with Penny's token classes (`bg-background`, `text-foreground`, `text-body`, `font-display`, `border-1.5`, …), not raw colours. Merge classes with `cn()` from `@repo/design-system`: it's configured for Penny's custom class names, so plain `tailwind-merge` would drop them. App code imports with the `@/` alias; the package uses relative imports.
+- **Animation**: Moti, through the wrappers exported by the design system (`MotiView`, `AnimatedPressable`, …) so `className` works, with transitions from `useMotion()`, which turns animation off when the system setting asks.
+- **UI components** live in `packages/design-system/src/components` and are exported from its `src/index.ts`. The Reusables CLI (`add`) fails in this repo because it shells out to npm. Instead, fetch `https://reactnativereusables.com/r/nativewind/<name>.json`, write each file's `content` into that folder, rewrite `@/registry/nativewind/` imports to relative ones, `bunx expo install` its `dependencies` in `apps/mobile`, and list them as `peerDependencies` of the package.
 - **Tests**:
-  - **mobile**: Vitest, for plain TS logic only (`*.test.ts` next to the code). Anything importing `react-native` can't run under Vitest.
+  - **mobile**, **design-system**: Vitest, for plain TS logic only (`*.test.ts` next to the code). Anything importing `react-native` can't run under Vitest.
   - **api**: `bun test` (Vitest can't load `bun:sqlite`). It starts a real server on port 0 against an in-memory DB.
 
 ## Don't "fix" these — they're load-bearing

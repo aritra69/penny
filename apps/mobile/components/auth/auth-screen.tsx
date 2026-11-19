@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Text } from "@/components/ui/text";
+import { Text } from "@repo/design-system";
 
 type AuthScreenProps = {
   title: string;

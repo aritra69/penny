@@ -1,6 +1,6 @@
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 
-import { colors, strokes } from "@/lib/theme";
+import { colors, strokes } from "../lib/theme";
 
 /**
  * Penny's line icons, copied from the design canvas: 24×24 grid, square ends, 1.5 stroke,

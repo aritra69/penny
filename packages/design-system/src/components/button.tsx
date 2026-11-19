@@ -3,11 +3,11 @@ import * as React from "react";
 import { type Pressable, View } from "react-native";
 import Svg, { Line } from "react-native-svg";
 
-import { AnimatedPressable } from "@/components/ui/motion";
-import { TextClassContext } from "@/components/ui/text";
-import { useMotion } from "@/lib/motion";
-import { colors } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { AnimatedPressable } from "./motion";
+import { TextClassContext } from "./text";
+import { useMotion } from "../lib/motion";
+import { colors } from "../lib/theme";
+import { cn } from "../lib/utils";
 
 /**
  * Square, flat, full-weight buttons. One primary (black) action per screen or card;

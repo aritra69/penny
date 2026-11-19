@@ -1,11 +1,11 @@
 import * as React from "react";
 import { type Pressable, View } from "react-native";
 
-import { Icon, type IconName } from "@/components/ui/icon";
-import { AnimatedPressable, MotiView } from "@/components/ui/motion";
-import { useMotion } from "@/lib/motion";
-import { colors } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { Icon, type IconName } from "./icon";
+import { AnimatedPressable, MotiView } from "./motion";
+import { useMotion } from "../lib/motion";
+import { colors } from "../lib/theme";
+import { cn } from "../lib/utils";
 
 type IconButtonVariant = "ghost" | "outline" | "solid";
 

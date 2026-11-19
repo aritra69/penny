@@ -1,4 +1,4 @@
-import "../../global.css";
+import "@repo/design-system/global.css";
 
 import {
   Inter_400Regular,
