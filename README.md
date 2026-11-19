@@ -88,3 +88,7 @@ bunx turbo run test --filter=@repo/design-system
 - Money is stored as integers in minor units (paise, cents) with an ISO 4217 currency, never as floats. Dates are ISO 8601 in UTC.
 
 More detail on the setup, conventions and the parts not to change is in [CLAUDE.md](CLAUDE.md).
+
+## License
+
+[MIT](LICENSE)
