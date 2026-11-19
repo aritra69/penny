@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -25,9 +26,18 @@ export default function HomeScreen() {
         <Text variant="h3">Hi, {session?.user.name.split(" ")[0] ?? "there"}</Text>
         <Text variant="muted">Signed in as {session?.user.email}</Text>
       </View>
-      <Button variant="outline" size="lg" disabled={signingOut} onPress={signOut}>
-        <Text>Sign out</Text>
-      </Button>
+      <View className="gap-3">
+        {__DEV__ ? (
+          <Link href="/design-system" asChild>
+            <Button variant="link" size="sm" className="self-center">
+              <Text>Open the design system gallery</Text>
+            </Button>
+          </Link>
+        ) : null}
+        <Button variant="outline" size="lg" disabled={signingOut} onPress={signOut}>
+          <Text>Sign out</Text>
+        </Button>
+      </View>
     </View>
   );
 }
