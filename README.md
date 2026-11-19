@@ -1,5 +1,9 @@
 # Penny
 
+<p align="center">
+  <img src="docs/images/hero.jpg" alt="Ink drawing of a person coming home and hanging a bag of groceries by the door" width="640">
+</p>
+
 An open-source personal finance app for Android (working name). Penny reads your bank SMS and payment alerts, sorts them into transactions, and shows where your money goes: what's left to spend this month, budgets, bills, goals and net worth. You can also ask it questions in plain words.
 
 **Status:** early. Sign-in, the API and the design system are in place; the main screens are being built.
