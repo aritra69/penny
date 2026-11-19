@@ -1,108 +1,131 @@
-import { TextClassContext } from "@/components/ui/text";
-import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Platform, Pressable } from "react-native";
+import * as React from "react";
+import { type Pressable, View } from "react-native";
+import Svg, { Line } from "react-native-svg";
 
-const buttonVariants = cva(
-  cn(
-    "group shrink-0 flex-row items-center justify-center gap-2 rounded-md shadow-none",
-    Platform.select({
-      web: "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-    }),
-  ),
-  {
-    variants: {
-      variant: {
-        default: cn(
-          "bg-primary shadow-sm shadow-black/5 active:bg-primary/90",
-          Platform.select({ web: "hover:bg-primary/90" }),
-        ),
-        destructive: cn(
-          "bg-destructive shadow-sm shadow-black/5 active:bg-destructive/90 dark:bg-destructive/60",
-          Platform.select({
-            web: "hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
-          }),
-        ),
-        outline: cn(
-          "border border-border bg-background shadow-sm shadow-black/5 active:bg-accent dark:border-input dark:bg-input/30 dark:active:bg-input/50",
-          Platform.select({
-            web: "hover:bg-accent dark:hover:bg-input/50",
-          }),
-        ),
-        secondary: cn(
-          "bg-secondary shadow-sm shadow-black/5 active:bg-secondary/80",
-          Platform.select({ web: "hover:bg-secondary/80" }),
-        ),
-        ghost: cn(
-          "active:bg-accent dark:active:bg-accent/50",
-          Platform.select({ web: "hover:bg-accent dark:hover:bg-accent/50" }),
-        ),
-        link: "",
-      },
-      size: {
-        default: cn("h-10 px-4 py-2 sm:h-9", Platform.select({ web: "has-[>svg]:px-3" })),
-        sm: cn("h-9 gap-1.5 rounded-md px-3 sm:h-8", Platform.select({ web: "has-[>svg]:px-2.5" })),
-        lg: cn("h-11 rounded-md px-6 sm:h-10", Platform.select({ web: "has-[>svg]:px-4" })),
-        icon: "h-10 w-10 sm:h-9 sm:w-9",
-      },
+import { AnimatedPressable } from "@/components/ui/motion";
+import { TextClassContext } from "@/components/ui/text";
+import { useMotion } from "@/lib/motion";
+import { colors } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+
+/**
+ * Square, flat, full-weight buttons. One primary (black) action per screen or card;
+ * a secondary (outlined) beside it; a dotted link for the quiet way out ("Discard", "Skip").
+ */
+const buttonVariants = cva("shrink-0 flex-row items-center justify-center gap-3", {
+  variants: {
+    variant: {
+      default: "bg-primary",
+      outline: "border-1.5 border-foreground bg-background",
+      secondary: "border-1.5 border-foreground bg-background",
+      /** White button on a black screen (onboarding steps). */
+      inverse: "bg-background",
+      ghost: "bg-transparent",
+      destructive: "bg-destructive",
+      link: "bg-transparent",
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+    size: {
+      default: "min-h-12 px-5",
+      lg: "min-h-14 px-6",
+      sm: "min-h-10 px-4",
+      icon: "h-touch w-touch",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
 
-const buttonTextVariants = cva(
-  cn(
-    "text-sm font-medium text-foreground",
-    Platform.select({ web: "pointer-events-none transition-colors" }),
-  ),
-  {
-    variants: {
-      variant: {
-        default: "text-primary-foreground",
-        destructive: "text-white",
-        outline: cn(
-          "group-active:text-accent-foreground",
-          Platform.select({ web: "group-hover:text-accent-foreground" }),
-        ),
-        secondary: "text-secondary-foreground",
-        ghost: "group-active:text-accent-foreground",
-        link: cn(
-          "text-primary group-active:underline",
-          Platform.select({ web: "underline-offset-4 hover:underline group-hover:underline" }),
-        ),
-      },
-      size: {
-        default: "",
-        sm: "",
-        lg: "",
-        icon: "",
-      },
+const buttonTextVariants = cva("font-sans-bold text-body text-foreground", {
+  variants: {
+    variant: {
+      default: "text-primary-foreground",
+      outline: "",
+      secondary: "",
+      inverse: "",
+      ghost: "",
+      destructive: "text-destructive-foreground",
+      link: "font-sans-semibold text-label",
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+    size: {
+      default: "",
+      lg: "text-body-lg",
+      sm: "font-sans-semibold text-label",
+      icon: "",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
 
-type ButtonProps = React.ComponentProps<typeof Pressable> &
-  React.RefAttributes<typeof Pressable> &
-  VariantProps<typeof buttonVariants>;
+type ButtonProps = Omit<React.ComponentProps<typeof Pressable>, "children" | "style"> &
+  VariantProps<typeof buttonVariants> & {
+    children?: React.ReactNode;
+  };
 
-function Button({ className, variant, size, ...props }: ButtonProps) {
+function Button({ className, variant, size, disabled, children, ...props }: ButtonProps) {
+  const motion = useMotion();
+  const [pressed, setPressed] = React.useState(false);
+  const isLink = variant === "link";
+
   return (
     <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
-      <Pressable
-        className={cn(props.disabled && "opacity-50", buttonVariants({ variant, size }), className)}
+      <AnimatedPressable
         role="button"
+        aria-disabled={!!disabled}
+        disabled={disabled}
+        className={cn(buttonVariants({ variant, size }), disabled && "opacity-35", className)}
+        animate={{ scale: pressed && !isLink ? 0.97 : 1, opacity: pressed && isLink ? 0.55 : 1 }}
+        transition={motion.press}
+        onPressIn={(e) => {
+          setPressed(true);
+          props.onPressIn?.(e);
+        }}
+        onPressOut={(e) => {
+          setPressed(false);
+          props.onPressOut?.(e);
+        }}
         {...props}
-      />
+      >
+        {isLink ? <DottedUnderline>{children}</DottedUnderline> : children}
+      </AnimatedPressable>
     </TextClassContext.Provider>
   );
 }
 
-export { Button, buttonTextVariants, buttonVariants };
+/**
+ * Penny's link style: a 2px dotted rule under the words. Drawn with SVG because Android
+ * ignores dotted text decoration.
+ */
+function DottedUnderline({
+  children,
+  color = colors.ink,
+}: {
+  children: React.ReactNode;
+  color?: string;
+}) {
+  return (
+    <View className="items-stretch">
+      {children}
+      <Svg height={4} width="100%" aria-hidden style={{ marginTop: 2 }}>
+        <Line
+          x1={1}
+          y1={2}
+          x2="100%"
+          y2={2}
+          stroke={color}
+          strokeWidth={2}
+          strokeDasharray="0.1 4"
+          strokeLinecap="round"
+        />
+      </Svg>
+    </View>
+  );
+}
+
+export { Button, buttonTextVariants, buttonVariants, DottedUnderline };
 export type { ButtonProps };

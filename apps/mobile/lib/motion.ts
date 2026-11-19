@@ -1,5 +1,11 @@
-import type { TransitionConfig } from "moti";
+import type { MotiTransitionProp, TransitionConfig } from "moti";
 import { Easing, useReducedMotion } from "react-native-reanimated";
+
+/**
+ * Moti types a component's `transition` prop as a map keyed by its animated styles, which a
+ * plain config doesn't satisfy, though Moti accepts one at runtime. This narrows it once.
+ */
+const transition = (config: TransitionConfig) => config as MotiTransitionProp;
 
 /**
  * Penny's motion presets for Moti. Motion is quick and plain: things settle into place,
@@ -7,24 +13,28 @@ import { Easing, useReducedMotion } from "react-native-reanimated";
  */
 const presets = {
   /** Press feedback on buttons and tiles. */
-  press: { type: "timing", duration: 90 },
+  press: transition({ type: "timing", duration: 90 }),
   /** Elements arriving: chat bubbles, draft cards, banners. */
-  enter: { type: "timing", duration: 240, easing: Easing.out(Easing.cubic) },
+  enter: transition({ type: "timing", duration: 240, easing: Easing.out(Easing.cubic) }),
   /** Selection changes: checkmarks, the tab dot, chosen cards. */
-  select: { type: "spring", damping: 20, stiffness: 260, mass: 0.8 },
+  select: transition({ type: "spring", damping: 20, stiffness: 260, mass: 0.8 }),
   /** Bars and lines filling to their value. */
-  fill: { type: "timing", duration: 650, easing: Easing.out(Easing.cubic) },
-} satisfies Record<string, TransitionConfig>;
+  fill: transition({ type: "timing", duration: 650, easing: Easing.out(Easing.cubic) }),
+};
 
 export type MotionPreset = keyof typeof presets;
 
-const instant: TransitionConfig = { type: "timing", duration: 0 };
+const instant = transition({ type: "timing", duration: 0 });
+const reduced: Record<MotionPreset, MotiTransitionProp> = {
+  press: instant,
+  enter: instant,
+  select: instant,
+  fill: instant,
+};
 
 /** Returns the transition presets, or instant ones when the user turned animations off. */
-export function useMotion(): Record<MotionPreset, TransitionConfig> {
-  const reduce = useReducedMotion();
-  if (!reduce) return presets;
-  return { press: instant, enter: instant, select: instant, fill: instant };
+export function useMotion(): Record<MotionPreset, MotiTransitionProp> {
+  return useReducedMotion() ? reduced : presets;
 }
 
 /** Starting offset for elements that slide in on entry. */
