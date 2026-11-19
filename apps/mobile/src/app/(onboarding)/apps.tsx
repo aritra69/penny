@@ -13,9 +13,10 @@ import { Button, SelectRow, Text } from "@repo/design-system";
 const SMS_SOURCE = "sms";
 
 export default function AppsScreen() {
-  const { back } = useOnboardingStep("apps", "key-ok");
   const router = useRouter();
   const { state, update } = useOnboarding();
+  // Subscribers come straight from the setup steps; there is no key screen behind them.
+  const { back } = useOnboardingStep("apps", state.plan === "own-key" ? "key-ok" : "steps");
   const [apps, setApps] = useState<DetectedApp[] | null>(null);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function AppsScreen() {
     <OnboardingScreen
       leading="back"
       onLeadingPress={back}
-      counter={stepCounter("apps")}
+      counter={stepCounter("apps", state.plan)}
       footer={
         <Button size="lg" disabled={!apps} onPress={next}>
           <Text>Next</Text>

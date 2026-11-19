@@ -61,8 +61,8 @@ export default function PrivacyScreen() {
           Messages with one-time codes are dropped on the phone before anything else happens.
         </Point>
         <Point>
-          To sort a message, Penny sends its text to OpenAI using{" "}
-          <Text className="font-sans-bold">your own key</Text>, and nothing else.
+          To sort a message, Penny sends its text to OpenAI, and{" "}
+          <Text className="font-sans-bold">nothing else</Text>.
         </Point>
         <Point>Penny is read-only. It can never send money or pay a bill.</Point>
       </View>

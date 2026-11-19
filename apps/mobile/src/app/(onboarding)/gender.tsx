@@ -26,7 +26,7 @@ export default function GenderScreen() {
       leading="back"
       onLeadingPress={back}
       footer={
-        <Button size="lg" disabled={!state.gender} onPress={() => router.push("/steps")}>
+        <Button size="lg" disabled={!state.gender} onPress={() => router.push("/plan")}>
           <Text>Next</Text>
         </Button>
       }

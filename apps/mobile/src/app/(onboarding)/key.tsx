@@ -17,7 +17,7 @@ const KEYS_URL = "https://platform.openai.com/api-keys";
 export default function OpenAIKeyScreen() {
   const { back } = useOnboardingStep("key", "steps");
   const router = useRouter();
-  const { update } = useOnboarding();
+  const { state, update } = useOnboarding();
   // The key lives in this field until it is checked, then only in SecureStore.
   const [key, setKey] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +59,7 @@ export default function OpenAIKeyScreen() {
     <OnboardingScreen
       leading="back"
       onLeadingPress={back}
-      counter={stepCounter("key")}
+      counter={stepCounter("key", state.plan)}
       footer={
         <View className="gap-3.5">
           <View className="flex-row items-start gap-2.5">

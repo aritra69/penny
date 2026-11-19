@@ -19,7 +19,7 @@ const count = (n: number) => n.toLocaleString("en-IN");
 export default function ImportScreen() {
   const { back } = useOnboardingStep("import", "accounts");
   const router = useRouter();
-  const { update } = useOnboarding();
+  const { state, update } = useOnboarding();
   const [progress, setProgress] = useState<ImportProgress | null>(null);
 
   // Reading starts when the screen opens and is left running when the user moves on.
@@ -42,7 +42,7 @@ export default function ImportScreen() {
     <OnboardingScreen
       leading="back"
       onLeadingPress={back}
-      counter={stepCounter("import")}
+      counter={stepCounter("import", state.plan)}
       footer={
         <>
           <Button size="lg" onPress={keepReading}>
