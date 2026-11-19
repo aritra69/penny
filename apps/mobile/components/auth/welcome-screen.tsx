@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { useRef, useState } from "react";
-import { ActivityIndicator, View, type TextInputInstance } from "react-native";
+import { ActivityIndicator, useWindowDimensions, View, type TextInputInstance } from "react-native";
 
 import { GoogleButton } from "@/components/auth/google-button";
 import { IllustrationSlot, OnboardingScreen } from "@/components/onboarding/onboarding-screen";
@@ -14,6 +14,12 @@ import {
   type SignUpFields,
 } from "@/lib/auth-validation";
 import { Button, colors, LabeledDivider, Text, TextField } from "@repo/design-system";
+
+/** The picture above the headline. Swap the file here to change it. */
+const HERO = require("@/assets/illustrations/hero-street.webp");
+/** The design's height, and the most of a short screen it may take so the form stays in view. */
+const HERO_HEIGHT = 220;
+const HERO_MAX_SHARE = 0.26;
 
 type WelcomeScreenProps = {
   /** "sign-in": log in to an account · "sign-up": create one. Same screen, one more field. */
@@ -31,6 +37,8 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
   const [showPassword, setShowPassword] = useState(false);
   const emailRef = useRef<TextInputInstance>(null);
   const passwordRef = useRef<TextInputInstance>(null);
+  const { height: screenHeight } = useWindowDimensions();
+  const heroHeight = Math.min(HERO_HEIGHT, Math.round(screenHeight * HERO_MAX_SHARE));
 
   const set = (key: keyof SignUpFields) => (value: string) =>
     setFields((f) => ({ ...f, [key]: value }));
@@ -82,7 +90,7 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
         </>
       }
     >
-      <IllustrationSlot height={220} className="mt-5" />
+      <IllustrationSlot source={HERO} height={heroHeight} className="mt-5" />
       <View className="gap-2.5 px-gutter pt-6">
         <Text variant="title">Know where your money goes, without typing a thing.</Text>
         <Text>

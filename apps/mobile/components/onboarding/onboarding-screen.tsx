@@ -1,8 +1,15 @@
 import { StatusBar } from "expo-status-bar";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+  type ImageSourcePropType,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { cn, ScreenHeader, Text } from "@repo/design-system";
+import { cn, colors, ScreenHeader, Text } from "@repo/design-system";
 
 type OnboardingScreenProps = {
   /** "dark" for the black screens (setup steps, SMS allowed). */
@@ -80,9 +87,36 @@ export function ResultIntro({ title, children }: { title: string; children: Reac
 }
 
 /**
- * Where a picture from the design canvas goes. The pictures aren't in the app's assets yet, so
- * this holds their place with the placeholder tone.
+ * A picture from the design canvas, cropped to a band like the boards do. The art is black ink
+ * on a transparent background, so it is tinted with the ink token, the way icons are: it follows
+ * the theme's ink rather than the system setting (Penny is light-only for now).
+ * Without a `source` (pictures not in the app's assets yet) it holds the place in grey.
  */
-export function IllustrationSlot({ height, className }: { height: number; className?: string }) {
-  return <View aria-hidden className={cn("mx-gutter bg-muted", className)} style={{ height }} />;
+export function IllustrationSlot({
+  source,
+  aspectRatio = 3 / 2,
+  height,
+  className,
+}: {
+  source?: ImageSourcePropType;
+  /** Width over height of the picture. The hero scenes are 3:2. */
+  aspectRatio?: number;
+  height: number;
+  className?: string;
+}) {
+  if (!source) {
+    return <View aria-hidden className={cn("mx-gutter bg-muted", className)} style={{ height }} />;
+  }
+  return (
+    // Decorative: the headline under it says what the screen is for.
+    <View aria-hidden className={cn("mx-gutter overflow-hidden", className)} style={{ height }}>
+      <Image
+        source={source}
+        tintColor={colors.ink}
+        // Full width, anchored to the bottom: any crop comes off the sky, not the ground.
+        resizeMode="contain"
+        style={{ position: "absolute", bottom: 0, width: "100%", height: undefined, aspectRatio }}
+      />
+    </View>
+  );
 }
