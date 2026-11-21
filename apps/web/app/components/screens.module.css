@@ -1,0 +1,380 @@
+/* App screens, set in the app's own type scale (packages/design-system README). */
+
+.phone {
+  position: relative;
+  width: 320px;
+  flex: none;
+  padding: 26px 10px 12px;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  color: var(--ink);
+  text-align: left;
+}
+
+.speaker {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 46px;
+  height: 5px;
+  transform: translateX(-50%);
+  background: var(--ink);
+}
+
+.screen {
+  position: relative;
+  height: 640px;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 26px;
+  padding: 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.battery {
+  width: 20px;
+  height: 9px;
+  border: 1.5px solid var(--ink);
+  background: linear-gradient(to right, var(--ink) 70%, transparent 70%);
+}
+
+.topBar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 8px 18px 12px;
+}
+
+.wordmark {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.wordmarkDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-left: 2px;
+  background: var(--ink);
+}
+
+.month {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.notice {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 18px;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 10px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.headerTitle {
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 700;
+}
+
+.headerStep {
+  font-size: 13px;
+}
+
+.body {
+  flex: 1;
+  padding: 16px 18px 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.label {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+.figureXl {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 50px;
+  letter-spacing: -1px;
+  margin-top: 2px;
+}
+
+.figure {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 28px;
+}
+
+.figureMd {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 40px;
+  letter-spacing: -0.5px;
+  margin: 6px 0 4px;
+}
+
+.heading {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 30px;
+  letter-spacing: -0.3px;
+  margin-bottom: 14px;
+}
+
+.caption {
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.small {
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.pace {
+  width: 100%;
+  margin: 14px 0 18px;
+  overflow: visible;
+}
+
+.chartLabel {
+  font-size: 9px;
+  fill: var(--ink);
+}
+
+.sectionTitle {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 24px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.rows {
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  border-bottom: 1px solid var(--ink);
+  transition: background-color 1.2s ease-out;
+}
+
+.row[data-fresh] {
+  animation: rowIn 420ms var(--ease-out) both;
+  background: var(--highlight);
+  margin: 0 -18px;
+  padding: 0 18px;
+}
+
+.rowText {
+  display: grid;
+  min-width: 0;
+}
+
+.amount {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tabBar {
+  display: flex;
+  justify-content: space-around;
+  margin-top: auto;
+  padding: 10px 6px 12px;
+  background: var(--ink);
+  color: var(--paper);
+  border-top: 3px solid var(--ink);
+  font-size: 10px;
+  line-height: 13px;
+}
+
+.tab {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.tabDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.tab[data-active] .tabDot {
+  background: var(--highlight);
+}
+
+.box {
+  border: 1.5px solid var(--ink);
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.fieldLabel {
+  font-size: 13px;
+  line-height: 19px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.message {
+  background: var(--muted);
+  padding: 12px;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.kv {
+  margin: 12px 0 16px;
+}
+
+.kv div {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ink);
+  font-size: 14px;
+}
+
+.kv dd {
+  font-weight: 600;
+}
+
+.buttons {
+  display: grid;
+  gap: 10px;
+  margin-top: auto;
+  padding-bottom: 18px;
+}
+
+.button,
+.buttonOutline {
+  display: grid;
+  place-items: center;
+  height: 46px;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1.5px solid var(--ink);
+}
+
+.button {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.chat {
+  flex: 1;
+  padding: 16px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+.bubble {
+  align-self: flex-end;
+  max-width: 82%;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.draft {
+  border: 1.5px solid var(--ink);
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+  animation: none;
+}
+
+.draftTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border: 1.5px dashed var(--ink);
+}
+
+.draft .kv {
+  margin: 4px 0 10px;
+}
+
+.note {
+  background: var(--muted);
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 19px;
+  margin-bottom: 10px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row[data-fresh] {
+    animation: none;
+  }
+}

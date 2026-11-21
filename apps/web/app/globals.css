@@ -1,50 +1,96 @@
+/* Penny's tokens, mirrored from packages/design-system/global.css. Light only, like the app. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #ffffff;
+  --ink: #000000;
+  --muted: #f2f2f2;
+  --muted-ink: #6b6b6b;
+  --highlight: #e8f542;
+  --line-muted: #d4d4d4;
+  --faint: #a3a3a3;
+  --destructive: #b91c1c;
+
+  --gutter: 20px;
+  --page: 1200px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (min-width: 900px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --gutter: 40px;
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--highlight);
+  color: var(--ink);
 }
 
 a {
   color: inherit;
-  text-decoration: none;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1.5px;
 }
 
-.imgDark {
-  display: none;
+:focus-visible {
+  outline: 2.5px solid var(--ink);
+  outline-offset: 3px;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
 
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+input,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--paper);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ink);
+  border: 3px solid var(--paper);
 }
