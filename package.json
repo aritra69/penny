@@ -11,7 +11,9 @@
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "prepare": "husky",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:up": "docker compose up -d --wait db",
+    "db:down": "docker compose down"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",

@@ -1,0 +1,23 @@
+# Penny's database for local development. Start it with `bun run db:up` (or `docker compose up -d`).
+# The API connects with DATABASE_URL from the root .env; the defaults here match .env.example.
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: penny
+      POSTGRES_PASSWORD: penny
+      POSTGRES_DB: penny
+    ports:
+      # Bound to this machine only. Set POSTGRES_PORT (and DATABASE_URL) if 5432 is taken.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - penny-db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U penny -d penny"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  penny-db:
