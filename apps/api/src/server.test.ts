@@ -211,3 +211,62 @@ describe("validation", () => {
     expect((await call("/nope")).status).toBe(404);
   });
 });
+
+describe("waitlist", () => {
+  const join = (body: unknown) => send("/waitlist", { method: "POST", body: JSON.stringify(body) });
+
+  let first: { position: number; code: string };
+
+  test("adds an email without a session and gives a place and an invite code", async () => {
+    const res = await join({ email: "  Reader@Example.com ", plan: "subscription" });
+    expect(res.status).toBe(201);
+    first = await read(res);
+    expect(first.position).toBe(1);
+    expect(first.code).toMatch(/^[a-z0-9]{7}$/);
+  });
+
+  test("joining again keeps the same place and code", async () => {
+    const res = await join({ email: "reader@example.com", plan: "own-key" });
+    expect(res.status).toBe(201);
+    expect(await read(res)).toEqual(first);
+  });
+
+  test("later sign-ups queue behind, and invites move the inviter up", async () => {
+    const second = await read(await join({ email: "two@example.com", plan: "undecided" }));
+    expect(second.position).toBe(2);
+    for (let i = 0; i < 3; i++) {
+      await join({ email: `friend${i}@example.com`, plan: "subscription", ref: second.code });
+    }
+    const again = await read(await join({ email: "two@example.com", plan: "undecided" }));
+    expect(again.position).toBe(1); // 2nd, minus 30 places, never above 1st
+  });
+
+  test("ignores a malformed invite code", async () => {
+    const res = await join({ email: "odd@example.com", plan: "subscription", ref: "../x" });
+    expect(res.status).toBe(201);
+  });
+
+  test("saves the answer to the one question", async () => {
+    const answer = (body: unknown) =>
+      send("/waitlist/answer", { method: "POST", body: JSON.stringify(body) });
+    expect((await answer({ code: first.code, answer: "spreadsheet" })).status).toBe(204);
+    expect((await answer({ code: "nobody12", answer: "spreadsheet" })).status).toBe(404);
+    expect((await answer({ code: first.code, answer: "abacus" })).status).toBe(422);
+  });
+
+  test("rejects a bad email, an unknown plan and extra fields", async () => {
+    const res = await join({ email: "not-an-email", plan: "lifetime", name: "x" });
+    expect(res.status).toBe(422);
+    const body = await read(res);
+    expect(body.details).toEqual([
+      "unknown field: name",
+      "email must be a valid email address",
+      "plan must be one of: subscription, own-key, undecided",
+    ]);
+  });
+
+  test("rejects invalid JSON", async () => {
+    const res = await send("/waitlist", { method: "POST", body: "{" });
+    expect(res.status).toBe(400);
+  });
+});

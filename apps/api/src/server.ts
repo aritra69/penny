@@ -8,6 +8,7 @@ import {
 import type { Db } from "./db.ts";
 import { createTransactionStore } from "./transactions.ts";
 import { validateTransaction } from "./validate.ts";
+import { createWaitlistStore, validateAnswer, validateWaitlist } from "./waitlist.ts";
 
 const json = (data: unknown, status = 200) => Response.json(data, { status });
 const error = (status: number, message: string, details?: string[]) =>
@@ -32,6 +33,7 @@ export type ServerOptions = { db: Db; auth: Auth; port: number };
 
 export function startServer({ db, auth, port }: ServerOptions) {
   const transactions = createTransactionStore(db);
+  const waitlist = createWaitlistStore(db);
 
   /** Runs `handler` with the signed-in user's ID, or answers 401. */
   const signedIn =
@@ -48,6 +50,31 @@ export function startServer({ db, auth, port }: ServerOptions) {
 
       // Sign-up, sign-in (email + Google), sessions, sign-out… see https://better-auth.com/docs
       "/api/auth/*": (req) => auth.handler(req),
+
+      // Public: the landing page's waitlist form. Answers with the person's place in line and
+      // their invite code; joining again with the same email updates the plan.
+      "/waitlist": {
+        POST: async (req) => {
+          const parsed = await readJson(req);
+          if (!parsed.ok) return error(400, "invalid JSON");
+          const result = validateWaitlist(parsed.body);
+          if (!result.ok) return error(422, "validation failed", result.errors);
+          return json(waitlist.join(result.value), 201);
+        },
+      },
+
+      // Public: the one question asked after joining. The invite code identifies the row.
+      "/waitlist/answer": {
+        POST: async (req) => {
+          const parsed = await readJson(req);
+          if (!parsed.ok) return error(400, "invalid JSON");
+          const result = validateAnswer(parsed.body);
+          if (!result.ok) return error(422, "validation failed", result.errors);
+          return waitlist.answer(result.value.code, result.value.answer)
+            ? new Response(null, { status: 204 })
+            : error(404, "not on the waitlist");
+        },
+      },
 
       "/transactions": {
         GET: signedIn((req, userId) => {

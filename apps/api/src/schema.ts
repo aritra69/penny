@@ -39,3 +39,29 @@ export type TransactionInput = Omit<
   "id" | "userId" | "createdAt" | "updatedAt"
 >;
 export type TransactionPatch = Partial<TransactionInput>;
+
+/** People who asked to hear when Penny launches, and the plan they'd pay for. */
+export const waitlist = sqliteTable("waitlist", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  /** Lower-cased, so the same person signs up once. */
+  email: text("email").notNull().unique(),
+  /** subscription | own-key | undecided */
+  plan: text("plan").notNull(),
+  /** Short code for this person's invite link. Set on first join. */
+  code: text("code").unique(),
+  /** The invite code this person signed up through, if any. */
+  referredBy: text("referred_by"),
+  /** Answer to "What do you use to track money today?" */
+  tracksWith: text("tracks_with"),
+  createdAt: text("created_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString())
+    .$onUpdateFn(() => new Date().toISOString()),
+});
+
+export type WaitlistEntry = typeof waitlist.$inferSelect;
