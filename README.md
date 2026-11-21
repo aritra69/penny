@@ -34,17 +34,13 @@ You need Bun 1.4.3 and Node 24 or newer. Use `bun` and `bunx` only: `npm` and `n
 bun install
 ```
 
-Set up the API and the app's environment:
+Set up the environment. One `.env` at the repo root feeds the API, the web app and the mobile app:
 
 ```bash
-cp apps/api/.env.example apps/api/.env
+cp .env.example .env
 ```
 
-```bash
-cp apps/mobile/.env.example apps/mobile/.env
-```
-
-Fill in `BETTER_AUTH_SECRET` (`openssl rand -base64 32`) and, for Google sign-in, the Google OAuth client. The comments in each `.env.example` explain every value.
+Fill in `BETTER_AUTH_SECRET` (`openssl rand -base64 32`) and, for Google sign-in, the Google OAuth client. The comments in `.env.example` explain every value.
 
 Start everything (Expo, the API on port 4000, and the web apps):
 

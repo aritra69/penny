@@ -36,9 +36,13 @@ Scope to one workspace with `bunx turbo run <task> --filter=<name>` (`mobile`, `
 Per app:
 
 - **mobile**: `bunx expo install <pkg>` to add deps · `bun run lint` (runs `eslint . --max-warnings 0`; `expo lint` is broken here) · `bunx expo-doctor`
-- **api**: `bun run db:generate` after editing `src/schema.ts` (migrations in `drizzle/` apply on server start) · `bun run db:studio` · copy `.env.example` to `.env` before `bun run dev`
+- **api**: `bun run db:generate` after editing `src/schema.ts` (migrations in `drizzle/` apply on server start) · `bun run db:studio` · scripts run with `--env-file=../../.env`
 
 Run tests, lint and typecheck before calling work done.
+
+## Environment
+
+One `.env` at the repo root (copy `.env.example`, gitignored) holds every app's variables; apps have no env files of their own. **api** scripts run with `bun --env-file=../../.env`; **web** loads it in `next.config.js` via `@next/env`; **mobile** loads it in `metro.config.js` (`process.loadEnvFile`) before Expo inlines `EXPO_PUBLIC_*`, so restart Expo with `-c` after changing one. Add new variables to `.env.example`, and to the `build` task's `env` in `turbo.json` if they change a build.
 
 ## Formatting, linting, hooks, CI
 
