@@ -2,7 +2,6 @@ import { StatusBar } from "expo-status-bar";
 import {
   Image,
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
   View,
   type ImageSourcePropType,
@@ -39,7 +38,8 @@ export function OnboardingScreen({
     <KeyboardAvoidingView
       className={cn("flex-1", dark ? "bg-primary" : "bg-background")}
       style={{ paddingTop: insets.top }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      // On both platforms: Android is edge-to-edge, so the window doesn't resize for the keyboard.
+      behavior="padding"
     >
       <StatusBar style={dark ? "light" : "dark"} />
       {leading ? (
