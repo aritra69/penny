@@ -11,7 +11,7 @@ An open-source personal finance app for Android (working name). Penny reads your
 ## Promises
 
 - **Read-only.** Penny never moves money or starts a payment.
-- **Your data stays on your phone.** Bank one-time codes are dropped on the device, never stored or sent anywhere.
+- **Your data is stored encrypted.** Transactions are kept on Penny's server, with amounts, merchants and notes encrypted before they are saved. Bank one-time codes are dropped on the device, never stored or sent anywhere.
 - **You confirm everything.** AI features can draft a transaction or a goal, but nothing is saved until you press Confirm.
 
 ## What's in this repo
@@ -21,7 +21,7 @@ A Turborepo monorepo, managed with [Bun](https://bun.sh).
 | Path                                                   | What                                                                                     |
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | `apps/mobile`                                          | The Android app: Expo SDK 58, React Native, Expo Router, NativeWind                      |
-| `apps/api`                                             | Auth and data API: Bun, Better Auth (email + Google), Drizzle, SQLite                    |
+| `apps/api`                                             | Auth and data API: Bun, Better Auth (email + Google), Drizzle, Postgres                  |
 | `packages/design-system`                               | Penny's look: tokens, components and motion ([README](packages/design-system/README.md)) |
 | `apps/web`, `apps/docs`                                | Next.js apps, still the starter templates                                                |
 | `packages/eslint-config`, `packages/typescript-config` | Shared lint and TypeScript settings                                                      |
@@ -40,7 +40,13 @@ Set up the environment. One `.env` at the repo root feeds the API, the web app a
 cp .env.example .env
 ```
 
-Fill in `BETTER_AUTH_SECRET` (`openssl rand -base64 32`) and, for Google sign-in, the Google OAuth client. The comments in `.env.example` explain every value.
+Fill in `BETTER_AUTH_SECRET` and `DATA_ENCRYPTION_KEY` (`openssl rand -base64 32` for each) and, for Google sign-in, the Google OAuth client. The comments in `.env.example` explain every value.
+
+Start the database. It is Postgres in Docker, so Docker needs to be running:
+
+```bash
+bun run db:up
+```
 
 Start everything (Expo, the API on port 4000, and the web apps):
 

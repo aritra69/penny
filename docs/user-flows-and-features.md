@@ -3,16 +3,16 @@
 Penny tracks where your money goes without you typing anything. It reads bank SMS and payment-app alerts on the phone, sorts each one into a transaction, and builds budgets, bills, goals and net worth from them. It is read-only: it never moves money.
 
 - **Source**: the "Penny · Screens" design ([artifact](https://claude.ai/artifact/DKFn6XzjniTAFQRnVubxyh)), 29 screens as of 18 Nov 2026. Figures in it are sample data.
-- **Status**: draft, written 19 Nov 2026. Open questions are at the end.
+- **Status**: draft, written 19 Nov 2026. Storage changed from on-phone to server on 21 Nov 2026. Open questions are at the end.
 
 ## Principles
 
 These come from the privacy-promise screen and the guardrails in `CLAUDE.md`. Every feature below has to respect them.
 
-1. **Data stays on the phone.** No Penny server sees transactions.
+1. **Data is stored encrypted.** Transactions live on Penny's server. Amounts, merchants, categories and notes are encrypted before they are saved, with a key kept apart from the database. The server holds that key, so this is encryption at rest, not end-to-end: Penny never says the data stays on the phone or that it can't be read.
 2. **Penny reads only what the user picks.** Chosen bank, UPI and investment apps, plus bank SMS from bank senders. WhatsApp, Gmail, chats and personal SMS are never read.
 3. **One-time codes are dropped on the phone** before any other processing, and never stored or sent.
-4. **The only thing that leaves the phone** is a message's text, sent to OpenAI with the user's own API key, to sort it.
+4. **What leaves the phone**: a message's text, sent to OpenAI to sort it, and the resulting transaction, sent to Penny's server to be stored encrypted. Messages from apps the user didn't pick, and one-time codes, never leave.
 5. **Read-only.** Penny never sends money, pays a bill, or changes a mandate. It points the user to their bank's app instead.
 6. **AI drafts, the user confirms.** Anything Ask Penny creates is a draft marked "Not saved" until the user taps Confirm.
 7. **Show the source.** Wherever Penny guesses, it shows the message, statement or price file it read.
@@ -53,7 +53,7 @@ flowchart TD
 | Goals     | New goal             | Name, target, date, and how to save: link investments (with a % share) or track by hand                               |
 | Wealth    | Net worth            | Net worth split into what you saved and market change, where it sits, holdings, bank balances                         |
 | Wealth    | Holding detail       | One fund or stock: units, price, gain, which goals it funds, where each number came from                              |
-| Ask Penny | Ask Penny            | Questions about your money, answered from on-phone data with a chart and the steps behind it                          |
+| Ask Penny | Ask Penny            | Questions about your money, answered from the user's Penny data with a chart and the steps behind it                  |
 | Ask Penny | Screenshot draft     | A payment screenshot turned into a draft transaction, with a duplicate check                                          |
 | Ask Penny | Goal draft           | A sentence ("Save 60k for a bike by June") turned into a draft goal                                                   |
 
@@ -156,7 +156,7 @@ flowchart LR
 
 ### 8. Ask Penny
 
-A chat tab for questions and quick entry. Every answer is built from on-phone data and says so.
+A chat tab for questions and quick entry. Every answer is built from the user's own Penny data and says so.
 
 - **Questions**: "Why is travel over this month?" gets a short answer, a chart, the steps Penny took (which transactions it read), and follow-up suggestions. Totals are added up by the app, not estimated by the model.
 - **Missed payment from a screenshot**: the user shares a payment screenshot. Penny reads it, checks for a duplicate across accounts around that date, and shows a draft transaction (Not saved) with Confirm, Edit, Discard.
@@ -220,19 +220,19 @@ Linked or implied by the design, but not drawn:
 
 ## What's built today
 
-| Piece                    | State                                                                                                    |
-| ------------------------ | -------------------------------------------------------------------------------------------------------- |
-| Design system            | `packages/design-system`: tokens, components, motion, dev-only gallery in the app                        |
-| Auth (API)               | Better Auth with email and password and Google, at `/api/auth/*`                                         |
-| Auth (mobile)            | Sign-in and sign-up screens, session in SecureStore, `(auth)` and `(app)` route groups                   |
-| Transactions             | API CRUD at `/transactions`, stored in SQLite per user: amount, currency, merchant, category, note, date |
-| Everything in "Features" | Not started                                                                                              |
+| Piece                    | State                                                                                                      |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Design system            | `packages/design-system`: tokens, components, motion, dev-only gallery in the app                          |
+| Auth (API)               | Better Auth with email and password and Google, at `/api/auth/*`                                           |
+| Auth (mobile)            | Sign-in and sign-up screens, session in SecureStore, `(auth)` and `(app)` route groups                     |
+| Transactions             | API CRUD at `/transactions`, stored in Postgres per user, money fields encrypted (`apps/api/src/vault.ts`) |
+| Everything in "Features" | Not started                                                                                                |
 
 ## Open questions
 
-1. **Where transactions live.** The design promises "No Penny server ever sees your transactions", but the API stores them in a server database. Do we drop server storage and keep transactions in an on-phone database, with the API only for auth (or for nothing)?
-2. **Do we need sign-in at all?** If all data stays on the phone, an account only matters for backup or multiple devices. Is Google/email sign-in kept, made optional, or removed?
-3. **Backup and phone change.** The OpenAI key is "never backed up". What happens to transactions, budgets and goals when the user gets a new phone?
+1. **Where transactions live.** Decided 21 Nov 2026: on Penny's server, in Postgres, with the money fields encrypted. The designs still say "Your data never leaves this phone"; the app and landing page copy have been changed, the design canvas has not.
+2. **Sign-in.** Kept: the account is what the stored data belongs to.
+3. **Backup and phone change.** Transactions come back when the user signs in on a new phone. The OpenAI key stays on the phone and is not backed up, so it has to be pasted again. Not built yet: the app doesn't sync anything.
 4. **Distribution.** The SMS step assumes a sideloaded install (restricted settings). Is Play Store release out of scope, given its SMS permission policy?
 5. **Sorting without a key.** Can Penny do anything before the user adds an OpenAI key, e.g. rule-based parsing for common bank formats, with the model only for unclear messages?
 6. **Currency and region.** The design is India-only (INR, UPI, CAS, Indian banks). Is v1 India-only?
