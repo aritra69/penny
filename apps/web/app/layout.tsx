@@ -17,7 +17,7 @@ const interTight = Inter_Tight({
 export const metadata: Metadata = {
   title: "Penny: your bank texts, already sorted",
   description:
-    "Penny reads your bank texts and payment alerts on your Android phone and shows what's left to spend. Read-only, on your phone, open source. Join the waitlist.",
+    "Penny reads your bank texts and payment alerts on your Android phone and shows what's left to spend. Read-only, encrypted, open source. Join the waitlist.",
 };
 
 export const viewport: Viewport = {

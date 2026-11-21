@@ -100,9 +100,9 @@ export default async function Home({
               <ul className={styles.promises}>
                 <li>
                   <strong>
-                    <mark className={styles.highlight}>Your data stays on your phone.</mark>
+                    <mark className={styles.highlight}>Your data is stored encrypted.</mark>
                   </strong>
-                  No Penny server ever sees your transactions.
+                  Amounts, shops and notes are encrypted before Penny saves them.
                 </li>
                 <li>
                   <strong>Read-only.</strong>

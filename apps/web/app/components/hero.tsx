@@ -361,8 +361,7 @@ export function Hero({
               </h1>
               <p className={styles.lede}>
                 Penny is an Android app that reads the texts and alerts your bank already sends, and
-                shows what&apos;s left to spend this month. Nothing to type. Nothing leaves your
-                phone.
+                shows what&apos;s left to spend this month. Nothing to type. Stored encrypted.
               </p>
               <JoinForm
                 action={action}
@@ -375,7 +374,7 @@ export function Hero({
           )}
           <p className={styles.facts}>
             <span>Read-only</span>
-            <span>On your phone</span>
+            <span>Encrypted</span>
             <span>Open source</span>
           </p>
         </div>

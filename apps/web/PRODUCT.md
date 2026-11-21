@@ -16,7 +16,7 @@ Penny reads bank texts and payment-app alerts on the phone, sorts each one into 
 
 ## Positioning
 
-Read-only and on-device: Penny never moves money, financial data stays on the phone, one-time codes are dropped before anything else happens, and AI only drafts — nothing saves until the user confirms. Open source (MIT).
+Read-only and encrypted: Penny never moves money, financial data is stored on Penny's servers with amounts, merchants and notes encrypted, one-time codes are dropped on the phone before anything else happens, and AI only drafts — nothing saves until the user confirms. Open source (MIT).
 
 ## Capabilities and Constraints
 
@@ -37,6 +37,6 @@ The design system in `packages/design-system`: ink on paper, black rules instead
 ## Product Principles
 
 1. Read-only over the user's money.
-2. Data stays on the phone.
+2. Data is stored on Penny's servers, encrypted. Never claim it stays on the phone or that Penny can't read it: the server holds the key.
 3. AI drafts, the user confirms.
 4. Show the source wherever Penny guesses.
