@@ -53,8 +53,9 @@ export default function PrivacyScreen() {
 
       <View role="list" className="gap-5 pl-[22px] pr-gutter pt-7">
         <Point>
-          <Text className="bg-highlight font-sans-bold">Your data never leaves this phone.</Text> No
-          Penny server ever sees your transactions.
+          <Text className="bg-highlight font-sans-bold">Your data is stored encrypted.</Text> Penny
+          keeps your transactions on its servers, with amounts, shops and notes encrypted before
+          they&apos;re saved.
         </Point>
         <Point>Penny reads only the apps you pick. WhatsApp, email and chats are never read.</Point>
         <Point>

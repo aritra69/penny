@@ -97,7 +97,8 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
       <View className="gap-2.5 px-gutter pt-6">
         <Text variant="title">Know where your money goes, without typing a thing.</Text>
         <Text>
-          Penny reads your bank SMS and payment alerts and keeps everything on this phone.
+          Penny reads your bank SMS and payment alerts and sorts them for you. Your data is stored
+          encrypted.
         </Text>
       </View>
 

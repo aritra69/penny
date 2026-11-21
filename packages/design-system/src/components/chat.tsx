@@ -71,7 +71,7 @@ export function ChatComposer({
   onSend,
   onAttach,
   placeholder = "Ask about your money",
-  disclaimer = "Answers use only the data on this phone. Check anything that looks off.",
+  disclaimer = "Answers use only your Penny data. Check anything that looks off.",
   className,
 }: ChatComposerProps) {
   const empty = value.trim().length === 0;

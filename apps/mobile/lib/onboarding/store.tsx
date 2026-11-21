@@ -9,7 +9,7 @@ import {
 
 /**
  * Where onboarding progress is kept. One small JSON value per account, on this phone only.
- * SecureStore is used because it is already here; swap this for the on-device database once
+ * SecureStore is used because it is already here; move this to the account on the server once
  * Penny has one.
  */
 const storageKey = (userId: string) => `penny.onboarding.${userId.replace(/[^\w.-]/g, "_")}`;
