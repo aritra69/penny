@@ -6,7 +6,9 @@ import { startServer } from "./server.ts";
 const env = Bun.env;
 
 if (!env.BETTER_AUTH_SECRET) {
-  throw new Error("BETTER_AUTH_SECRET is not set. Copy .env.example to .env and fill it in.");
+  throw new Error(
+    "BETTER_AUTH_SECRET is not set. Copy .env.example to .env at the repo root and fill it in.",
+  );
 }
 
 const google =
