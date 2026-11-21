@@ -64,50 +64,37 @@ function newCode() {
 
 export function createWaitlistStore(db: Db) {
   /** Place in line: order of joining, moved up for each friend who joined through your link. */
-  const place = (code: string, createdAt: string): number => {
-    const ahead = db
+  const place = async (code: string, createdAt: string): Promise<number> => {
+    const [ahead] = await db
       .select({ n: count() })
       .from(waitlist)
-      .where(lte(waitlist.createdAt, createdAt))
-      .get();
-    const invited = db
+      .where(lte(waitlist.createdAt, createdAt));
+    const [invited] = await db
       .select({ n: count() })
       .from(waitlist)
-      .where(eq(waitlist.referredBy, code))
-      .get();
+      .where(eq(waitlist.referredBy, code));
     return Math.max(1, (ahead?.n ?? 1) - PLACES_PER_REFERRAL * (invited?.n ?? 0));
   };
 
   return {
     /** Adds the email, or updates the plan if it's already on the list. */
-    join({ email, plan, ref }: WaitlistInput): WaitlistPlace {
-      const row = db
+    async join({ email, plan, ref }: WaitlistInput): Promise<WaitlistPlace> {
+      const [row] = await db
         .insert(waitlist)
         .values({ email, plan, code: newCode(), referredBy: ref ?? null })
         .onConflictDoUpdate({ target: waitlist.email, set: { plan } })
-        .returning()
-        .get();
-      // Rows from before invite codes existed get one now.
-      const code =
-        row.code ??
-        db
-          .update(waitlist)
-          .set({ code: newCode() })
-          .where(eq(waitlist.id, row.id))
-          .returning()
-          .get().code!;
-      return { position: place(code, row.createdAt), code };
+        .returning();
+      return { position: await place(row!.code, row!.createdAt), code: row!.code };
     },
 
     /** Saves the answer to the one question. False if the code isn't on the list. */
-    answer(code: string, answer: TracksWith): boolean {
-      const row = db
+    async answer(code: string, answer: TracksWith): Promise<boolean> {
+      const rows = await db
         .update(waitlist)
         .set({ tracksWith: answer })
         .where(eq(waitlist.code, code))
-        .returning({ id: waitlist.id })
-        .get();
-      return Boolean(row);
+        .returning({ id: waitlist.id });
+      return rows.length > 0;
     },
   };
 }

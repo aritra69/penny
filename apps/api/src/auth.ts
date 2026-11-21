@@ -40,7 +40,7 @@ export function createAuth(db: Db, config: AuthConfig) {
     appName: APP_NAME,
     baseURL: config.baseURL,
     secret: config.secret,
-    database: drizzleAdapter(db, { provider: "sqlite", schema, usePlural: true }),
+    database: drizzleAdapter(db, { provider: "pg", schema, usePlural: true }),
     advanced: { database: { generateId: "uuid" } },
     trustedOrigins: [`${APP_SCHEME}://`, ...(config.dev ? DEV_TRUSTED_ORIGINS : [])],
     emailAndPassword: {

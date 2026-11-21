@@ -1,20 +1,23 @@
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { users } from "./auth-schema.ts";
 
 export * from "./auth-schema.ts";
 
-export const transactions = sqliteTable(
+export const transactions = pgTable(
   "transactions",
   {
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     /** Owner. Every query is scoped to the signed-in user. */
-    userId: text("user_id")
+    userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    /** Minor units (paise, cents). Negative = money out. */
-    amount: integer("amount").notNull(),
+    /**
+     * Encrypted by `vault.ts` before it is stored: the integer amount in minor units (paise,
+     * cents; negative = money out), as text. So are merchant, category and note.
+     */
+    amount: text("amount").notNull(),
     /** ISO 4217 code, e.g. INR. */
     currency: text("currency").notNull(),
     merchant: text("merchant"),
@@ -33,15 +36,16 @@ export const transactions = sqliteTable(
   (t) => [index("transactions_user_occurred_at").on(t.userId, t.occurredAt)],
 );
 
-export type Transaction = typeof transactions.$inferSelect;
-export type TransactionInput = Omit<
-  typeof transactions.$inferInsert,
-  "id" | "userId" | "createdAt" | "updatedAt"
->;
+/** A row as stored, with the money fields still encrypted. */
+export type TransactionRow = typeof transactions.$inferSelect;
+/** A transaction as the API returns it. */
+export type Transaction = Omit<TransactionRow, "amount"> & { amount: number };
+export type TransactionInput = Pick<Transaction, "amount" | "currency" | "occurredAt"> &
+  Partial<Pick<Transaction, "merchant" | "category" | "note">>;
 export type TransactionPatch = Partial<TransactionInput>;
 
 /** People who asked to hear when Penny launches, and the plan they'd pay for. */
-export const waitlist = sqliteTable("waitlist", {
+export const waitlist = pgTable("waitlist", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -49,8 +53,8 @@ export const waitlist = sqliteTable("waitlist", {
   email: text("email").notNull().unique(),
   /** subscription | own-key | undecided */
   plan: text("plan").notNull(),
-  /** Short code for this person's invite link. Set on first join. */
-  code: text("code").unique(),
+  /** Short code for this person's invite link. */
+  code: text("code").notNull().unique(),
   /** The invite code this person signed up through, if any. */
   referredBy: text("referred_by"),
   /** Answer to "What do you use to track money today?" */

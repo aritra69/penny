@@ -1,22 +1,16 @@
-import { Database } from "bun:sqlite";
-import { drizzle } from "drizzle-orm/bun-sqlite";
-import { migrate } from "drizzle-orm/bun-sqlite/migrator";
-import { mkdirSync } from "node:fs";
-import { dirname } from "node:path";
+import { SQL } from "bun";
+import { drizzle } from "drizzle-orm/bun-sql";
+import { migrate } from "drizzle-orm/bun-sql/migrator";
+import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { MIGRATIONS_DIR } from "./constants/index.ts";
 import * as schema from "./schema.ts";
 
-/** Opens the SQLite file (or `:memory:`) and applies any pending migrations. */
-export function openDb(path: string) {
-  if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
+/** Any Postgres connection Drizzle can drive: Bun's client here, PGlite in tests. */
+export type Db = PgDatabase<PgQueryResultHKT, typeof schema>;
 
-  const client = new Database(path, { create: true });
-  client.run("PRAGMA journal_mode = WAL;");
-  client.run("PRAGMA foreign_keys = ON;");
-
-  const db = drizzle({ client, schema });
-  migrate(db, { migrationsFolder: MIGRATIONS_DIR });
+/** Connects to Postgres (`postgres://user:password@host:port/db`) and applies pending migrations. */
+export async function openDb(url: string): Promise<Db> {
+  const db = drizzle({ client: new SQL(url), schema });
+  await migrate(db, { migrationsFolder: MIGRATIONS_DIR });
   return db;
 }
-
-export type Db = ReturnType<typeof openDb>;

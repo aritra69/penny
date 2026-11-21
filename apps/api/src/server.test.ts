@@ -1,12 +1,16 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { createAuth } from "./auth.ts";
-import { openDb } from "./db.ts";
+import type { Db } from "./db.ts";
+import { transactions } from "./schema.ts";
 import { startServer } from "./server.ts";
+import { openTestDb } from "./test-db.ts";
+import { createVault } from "./vault.ts";
 
 const AUTH_URL = "http://localhost";
 
 let server: ReturnType<typeof startServer>;
 let base: string;
+let db: Db;
 /** Session cookies of two signed-up users. */
 let alice: string;
 let bob: string;
@@ -34,9 +38,10 @@ async function signUp(email: string) {
 }
 
 beforeAll(async () => {
-  const db = openDb(":memory:");
+  db = await openTestDb();
   const auth = createAuth(db, { baseURL: AUTH_URL, secret: "test-secret-".repeat(4) });
-  server = startServer({ db, auth, port: 0 });
+  const vault = createVault(Buffer.alloc(32, 1).toString("base64"));
+  server = startServer({ db, auth, vault, port: 0 });
   base = server.url.href.replace(/\/$/, "");
   alice = await signUp("alice@example.com");
   bob = await signUp("bob@example.com");
@@ -73,6 +78,15 @@ describe("transactions CRUD", () => {
       occurredAt: "2026-11-18T04:00:00.000Z",
     });
     id = tx.id;
+  });
+
+  test("stores the money fields encrypted", async () => {
+    const [row] = await db.select().from(transactions);
+    const stored = JSON.stringify(row);
+    expect(stored).not.toContain("24900");
+    expect(stored).not.toContain("Blue Tokai");
+    expect(stored).not.toContain("Coffee");
+    expect(row!.amount).toStartWith("v1:");
   });
 
   test("reads it back", async () => {

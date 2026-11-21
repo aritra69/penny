@@ -8,6 +8,7 @@ import {
 import type { Db } from "./db.ts";
 import { createTransactionStore } from "./transactions.ts";
 import { validateTransaction } from "./validate.ts";
+import type { Vault } from "./vault.ts";
 import { createWaitlistStore, validateAnswer, validateWaitlist } from "./waitlist.ts";
 
 const json = (data: unknown, status = 200) => Response.json(data, { status });
@@ -29,10 +30,10 @@ function intParam(url: URL, name: string, fallback: number, min: number, max: nu
   return Number.isInteger(n) && n >= min && n <= max ? n : null;
 }
 
-export type ServerOptions = { db: Db; auth: Auth; port: number };
+export type ServerOptions = { db: Db; auth: Auth; vault: Vault; port: number };
 
-export function startServer({ db, auth, port }: ServerOptions) {
-  const transactions = createTransactionStore(db);
+export function startServer({ db, auth, vault, port }: ServerOptions) {
+  const transactions = createTransactionStore(db, vault);
   const waitlist = createWaitlistStore(db);
 
   /** Runs `handler` with the signed-in user's ID, or answers 401. */
@@ -59,7 +60,7 @@ export function startServer({ db, auth, port }: ServerOptions) {
           if (!parsed.ok) return error(400, "invalid JSON");
           const result = validateWaitlist(parsed.body);
           if (!result.ok) return error(422, "validation failed", result.errors);
-          return json(waitlist.join(result.value), 201);
+          return json(await waitlist.join(result.value), 201);
         },
       },
 
@@ -70,14 +71,14 @@ export function startServer({ db, auth, port }: ServerOptions) {
           if (!parsed.ok) return error(400, "invalid JSON");
           const result = validateAnswer(parsed.body);
           if (!result.ok) return error(422, "validation failed", result.errors);
-          return waitlist.answer(result.value.code, result.value.answer)
+          return (await waitlist.answer(result.value.code, result.value.answer))
             ? new Response(null, { status: 204 })
             : error(404, "not on the waitlist");
         },
       },
 
       "/transactions": {
-        GET: signedIn((req, userId) => {
+        GET: signedIn(async (req, userId) => {
           const url = new URL(req.url);
           const limit = intParam(url, "limit", DEFAULT_PAGE_LIMIT, MIN_PAGE_LIMIT, MAX_PAGE_LIMIT);
           const offset = intParam(url, "offset", DEFAULT_PAGE_OFFSET, 0, Number.MAX_SAFE_INTEGER);
@@ -88,7 +89,7 @@ export function startServer({ db, auth, port }: ServerOptions) {
             );
           }
           return json({
-            data: transactions.list(userId, limit, offset),
+            data: await transactions.list(userId, limit, offset),
             limit,
             offset,
           });
@@ -99,13 +100,13 @@ export function startServer({ db, auth, port }: ServerOptions) {
           if (!parsed.ok) return error(400, "invalid JSON");
           const result = validateTransaction(parsed.body, false);
           if (!result.ok) return error(422, "validation failed", result.errors);
-          return json(transactions.create(userId, result.value), 201);
+          return json(await transactions.create(userId, result.value), 201);
         }),
       },
 
       "/transactions/:id": {
-        GET: signedIn((req, userId) => {
-          const tx = transactions.get(userId, req.params.id);
+        GET: signedIn(async (req, userId) => {
+          const tx = await transactions.get(userId, req.params.id);
           return tx ? json(tx) : error(404, "transaction not found");
         }),
 
@@ -114,12 +115,12 @@ export function startServer({ db, auth, port }: ServerOptions) {
           if (!parsed.ok) return error(400, "invalid JSON");
           const result = validateTransaction(parsed.body, true);
           if (!result.ok) return error(422, "validation failed", result.errors);
-          const tx = transactions.update(userId, req.params.id, result.value);
+          const tx = await transactions.update(userId, req.params.id, result.value);
           return tx ? json(tx) : error(404, "transaction not found");
         }),
 
-        DELETE: signedIn((req, userId) =>
-          transactions.delete(userId, req.params.id)
+        DELETE: signedIn(async (req, userId) =>
+          (await transactions.delete(userId, req.params.id))
             ? new Response(null, { status: 204 })
             : error(404, "transaction not found"),
         ),

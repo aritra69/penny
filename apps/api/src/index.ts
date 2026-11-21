@@ -1,7 +1,8 @@
 import { createAuth } from "./auth.ts";
-import { DEFAULT_AUTH_URL, DEFAULT_DATABASE_PATH, DEFAULT_PORT } from "./constants/index.ts";
+import { DEFAULT_AUTH_URL, DEFAULT_DATABASE_URL, DEFAULT_PORT } from "./constants/index.ts";
 import { openDb } from "./db.ts";
 import { startServer } from "./server.ts";
+import { createVault } from "./vault.ts";
 
 const env = Bun.env;
 
@@ -11,12 +12,24 @@ if (!env.BETTER_AUTH_SECRET) {
   );
 }
 
+if (!env.DATA_ENCRYPTION_KEY) {
+  throw new Error(
+    "DATA_ENCRYPTION_KEY is not set. Generate one with `openssl rand -base64 32` and add it to .env.",
+  );
+}
+const vault = createVault(env.DATA_ENCRYPTION_KEY);
+
 const google =
   env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
     ? { clientId: env.GOOGLE_CLIENT_ID, clientSecret: env.GOOGLE_CLIENT_SECRET }
     : undefined;
 
-const db = openDb(env.DATABASE_PATH ?? DEFAULT_DATABASE_PATH);
+const databaseUrl = env.DATABASE_URL ?? DEFAULT_DATABASE_URL;
+const db = await openDb(databaseUrl).catch((cause) => {
+  throw new Error("Couldn't reach Postgres. Start it with `bun run db:up` from the repo root.", {
+    cause,
+  });
+});
 const auth = createAuth(db, {
   baseURL: env.BETTER_AUTH_URL ?? DEFAULT_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
@@ -24,7 +37,7 @@ const auth = createAuth(db, {
   google,
   infraApiKey: env.BETTER_AUTH_API_KEY,
 });
-const server = startServer({ db, auth, port: Number(env.PORT ?? DEFAULT_PORT) });
+const server = startServer({ db, auth, vault, port: Number(env.PORT ?? DEFAULT_PORT) });
 
 console.log(`Penny API listening on ${server.url}`);
 if (!google) console.log("Google sign-in is off: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.");
