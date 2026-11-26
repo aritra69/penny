@@ -75,11 +75,6 @@ export default function AppsScreen() {
           />
         </View>
       ) : null}
-
-      <View className="gap-2 px-gutter pt-7">
-        <Text className="font-sans-bold text-caption">Never read</Text>
-        <Text>Chats, email, personal SMS and one-time codes.</Text>
-      </View>
     </OnboardingScreen>
   );
 }
