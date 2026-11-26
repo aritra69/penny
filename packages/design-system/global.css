@@ -5,6 +5,7 @@
 /*
  * Penny design tokens. Monochrome: ink on paper, hierarchy from size and weight,
  * black borders instead of shadows, square corners. One accent (`highlight`), used sparingly.
+ * Light only: there are no dark tokens, and the app pins itself to light mode natively.
  * Hex mirrors for SVG and animation live in lib/theme.ts — keep the two in sync.
  */
 @layer base {
@@ -45,32 +46,5 @@
     --input: 0 0% 0%;
     --ring: 0 0% 0%;
     --radius: 0rem;
-  }
-
-  /* The app is light-only for now (app.json userInterfaceStyle). An inverted fallback. */
-  .dark:root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 0%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 64%;
-    --accent: 0 0% 12%;
-    --accent-foreground: 0 0% 100%;
-    --highlight: 64 90% 61%;
-    --highlight-foreground: 0 0% 0%;
-    --line-muted: 0 0% 25%;
-    --faint: 0 0% 45%;
-    --destructive: 0 84% 65%;
-    --destructive-foreground: 0 0% 0%;
-    --border: 0 0% 100%;
-    --input: 0 0% 100%;
-    --ring: 0 0% 100%;
   }
 }

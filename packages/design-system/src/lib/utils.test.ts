@@ -46,7 +46,6 @@ describe("cn with Penny's preset", () => {
   });
 
   it("matches the class names tailwind-preset.js defines", () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const preset = require("../../tailwind-preset.js");
     const { fontFamily, fontSize, borderWidth, spacing } = preset.theme.extend;
     expect(pennyClassNames.fontSize).toEqual(Object.keys(fontSize));

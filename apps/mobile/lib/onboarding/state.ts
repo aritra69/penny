@@ -42,7 +42,7 @@ export function stepCounter(step: OnboardingStep, plan: Plan | null): string | u
   return index === -1 ? undefined : `${index + 1} / ${steps.length}`;
 }
 
-/** What the test call to OpenAI found. The key itself lives in SecureStore, never here. */
+/** What the test call to OpenAI found. The key itself lives in the Keychain, never here. */
 export type KeyCheck = { model: string; latencyMs: number };
 
 export type AccountChoices = {

@@ -37,6 +37,10 @@ async function signUp(email: string) {
     .join("; ");
 }
 
+// Booting PGlite, migrating and hashing two passwords outgrows bun's 5 s hook timeout on CI,
+// where it runs alongside the web builds.
+const SETUP_TIMEOUT_MS = 30_000;
+
 beforeAll(async () => {
   db = await openTestDb();
   const auth = createAuth(db, { baseURL: AUTH_URL, secret: "test-secret-".repeat(4) });
@@ -45,7 +49,7 @@ beforeAll(async () => {
   base = server.url.href.replace(/\/$/, "");
   alice = await signUp("alice@example.com");
   bob = await signUp("bob@example.com");
-});
+}, SETUP_TIMEOUT_MS);
 afterAll(() => server.stop(true));
 
 /** Calls the API as `cookie`'s user (Alice by default). */
@@ -282,5 +286,22 @@ describe("waitlist", () => {
   test("rejects invalid JSON", async () => {
     const res = await send("/waitlist", { method: "POST", body: "{" });
     expect(res.status).toBe(400);
+  });
+});
+
+describe("mobile app origin", () => {
+  // Better Auth checks the origin of requests that carry a session cookie, so a signed-in app's
+  // requests fail without `Origin: penny://` (apps/mobile/lib/auth/native-client.ts sends it).
+  const signOut = async (origin: string) => {
+    const cookie = await signUp(`${crypto.randomUUID()}@example.com`);
+    return send("/api/auth/sign-out", { method: "POST", headers: { origin, cookie }, body: "{}" });
+  };
+
+  test("accepts the app's penny:// origin", async () => {
+    expect((await signOut("penny://")).status).toBe(200);
+  });
+
+  test("rejects an origin it doesn't trust", async () => {
+    expect((await signOut("https://evil.example")).status).toBe(403);
   });
 });

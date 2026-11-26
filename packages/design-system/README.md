@@ -11,7 +11,7 @@ import { Amount, BigFigure, Button, Text, useMotion } from "@repo/design-system"
 ```
 
 - Import from `@repo/design-system` only. The one other entry point is `@repo/design-system/gallery` (dev screen).
-- The app's `metro.config.js` compiles `@repo/design-system/global.css`, its `tailwind.config.js` uses `@repo/design-system/tailwind-preset` and scans this package's `src`, and its root layout loads the fonts (Inter 400/500/600/700, Inter Tight 700/800 via `@expo-google-fonts`).
+- The app's `metro.config.js` compiles `@repo/design-system/global.css`, its `tailwind.config.js` uses `@repo/design-system/tailwind-preset` and scans this package's `src`, and it bundles the fonts natively (Inter 400/500/600/700, Inter Tight 700/800, in `apps/mobile/assets/fonts`, family names matching their file names).
 - Open **Home → "Open the design system gallery"** in a dev build to see every component with example data.
 
 ## Principles
@@ -41,7 +41,7 @@ import { Amount, BigFigure, Button, Text, useMotion } from "@repo/design-system"
 
 Classes: `bg-background`, `text-foreground`, `border-foreground`, `bg-highlight`, … Hex mirrors for SVG and animation: `colors` in `src/lib/theme.ts`. The canvas also explored marigold, vermilion and cobalt accents (`accentOptions`); highlighter is the chosen default.
 
-Dark mode isn't designed yet; the app is light-only (`userInterfaceStyle: "light"`). `global.css` keeps an inverted fallback.
+Penny has no dark mode. The app pins itself to light mode natively (`AppCompatDelegate.MODE_NIGHT_NO` on Android, `UIUserInterfaceStyle` Light on iOS), and `global.css` defines light tokens only. Don't add `dark:` classes.
 
 ### Type
 

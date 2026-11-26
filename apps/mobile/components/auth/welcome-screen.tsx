@@ -1,10 +1,9 @@
-import { Link } from "expo-router";
 import { useRef, useState } from "react";
 import { ActivityIndicator, useWindowDimensions, View, type TextInputInstance } from "react-native";
 
 import { GoogleButton } from "@/components/auth/google-button";
 import { IllustrationSlot, OnboardingScreen } from "@/components/onboarding/onboarding-screen";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/client";
 import {
   hasErrors,
   MIN_PASSWORD_LENGTH,
@@ -13,6 +12,7 @@ import {
   type FieldErrors,
   type SignUpFields,
 } from "@/lib/auth-validation";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, colors, LabeledDivider, Text, TextField } from "@repo/design-system";
 
 /** The picture above the headline, one per mode. Swap a file here to change it. */
@@ -32,6 +32,7 @@ type WelcomeScreenProps = {
 /** Welcome and sign in: the first screen after the splash. */
 export function WelcomeScreen({ mode }: WelcomeScreenProps) {
   const signUp = mode === "sign-up";
+  const navigation = useAppNavigation();
   const [fields, setFields] = useState<SignUpFields>({ name: "", email: "", password: "" });
   const [errors, setErrors] = useState<FieldErrors<SignUpFields>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -161,13 +162,16 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
             }}
           />
           <View className="flex-row items-center justify-between pt-2">
-            <Link href={signUp ? "/sign-in" : "/sign-up"} replace asChild>
-              <Button variant="link" size="sm" className="px-0">
-                <Text className="text-caption">
-                  {signUp ? "Have an account? Log in" : "New here? Create account"}
-                </Text>
-              </Button>
-            </Link>
+            <Button
+              variant="link"
+              size="sm"
+              className="px-0"
+              onPress={() => navigation.replace(signUp ? "sign-in" : "sign-up")}
+            >
+              <Text className="text-caption">
+                {signUp ? "Have an account? Log in" : "New here? Create account"}
+              </Text>
+            </Button>
             {signUp ? null : (
               <Button
                 variant="link"

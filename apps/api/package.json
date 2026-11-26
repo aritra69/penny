@@ -26,7 +26,6 @@
   "dependencies": {
     "@ai-sdk/openai": "^4.0.121",
     "@better-auth/drizzle-adapter": "^1.7.26",
-    "@better-auth/expo": "1.7.26",
     "@better-auth/infra": "^0.4.31",
     "ai": "^7.0.177",
     "better-auth": "1.7.26",

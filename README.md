@@ -20,7 +20,7 @@ A Turborepo monorepo, managed with [Bun](https://bun.sh).
 
 | Path                                                   | What                                                                                     |
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `apps/mobile`                                          | The Android app: Expo SDK 58, React Native, Expo Router, NativeWind                      |
+| `apps/mobile`                                          | The Android app: React Native CLI, React Navigation, NativeWind                          |
 | `apps/api`                                             | Auth and data API: Bun, Better Auth (email + Google), Drizzle, Postgres                  |
 | `packages/design-system`                               | Penny's look: tokens, components and motion ([README](packages/design-system/README.md)) |
 | `apps/web`, `apps/docs`                                | Next.js apps, still the starter templates                                                |
@@ -48,16 +48,22 @@ Start the database. It is Postgres in Docker, so Docker needs to be running:
 bun run db:up
 ```
 
-Start everything (Expo, the API on port 4000, and the web apps):
+Start everything (Metro, the API on port 4000, and the web apps):
 
 ```bash
 bun run dev
 ```
 
-The app uses native modules, so run it in a development build rather than Expo Go. For Google sign-in on an Android device or emulator, forward the API port and point the app at `http://localhost:4000`:
+Then build and install the app on an Android emulator or a USB device (needs JDK 17 and the Android SDK):
 
 ```bash
-adb reverse tcp:4000 tcp:4000
+cd apps/mobile && bun run android
+```
+
+On a USB device, forward Metro and the API so the phone can reach them on `localhost`:
+
+```bash
+cd apps/mobile && bun run adb:reverse
 ```
 
 ## Design system

@@ -6,7 +6,7 @@ const { hairlineWidth } = require("nativewind/theme");
  * and adds this package's src to `content`.
  *
  * Type: on Android a font weight is a separate font file, so each step names its family
- * (loaded by the app with expo-font) instead of setting fontWeight.
+ * (bundled natively by the app, see apps/mobile/assets/fonts) instead of setting fontWeight.
  * Pair a size with a family: `text-body font-sans-semibold`, `text-figure-xl font-display`.
  */
 const fontSize = {
@@ -27,6 +27,8 @@ const fontSize = {
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // Penny is light-only. "class" means `dark:` variants apply only if something sets the dark
+  // class, and nothing does; the default ("media") would follow the phone's dark mode.
   darkMode: "class",
   theme: {
     extend: {

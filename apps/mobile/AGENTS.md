@@ -1,41 +1,34 @@
-This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
-
-## Expo has changed — do not trust your training data
-
-Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
-
-1. Read the major version of the `expo` package in `package.json`.
-2. Fetch the matching versioned docs: `https://docs.expo.dev/versions/v<major>.0.0/`
-3. For anything else, fetch https://docs.expo.dev/llms.txt — an index of all Expo docs with corrections to common LLM misconceptions. Follow its links to the specific page you need; never answer from memory.
+This is a bare React Native (React Native CLI) app: no Expo. It is Android-first; iOS builds but isn't set up for release.
 
 ## Commands
 
-Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
+Run from `apps/mobile`. Use `bun`/`bunx`: `npm` and `npx` are blocked in this repo.
 
 ```bash
-npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
-npx expo start              # start the dev server
-npx expo lint               # lint
-npx tsc --noEmit            # typecheck
-npx expo-doctor             # diagnose dependency and config issues
-npx expo install --fix      # fix incompatible package versions
+bun run start               # Metro (add --reset-cache after changing an RN_PUBLIC_* value)
+bun run android             # build, install and open the debug app on a device or emulator
+bun run ios                 # same on the iOS simulator (run `bun run pods` first)
+bun run adb:reverse         # USB device: reach Metro (8081) and the API (4000) on localhost
+bun run lint                # eslint . --max-warnings 0
+bun run check-types         # tsc --noEmit
+bun run test                # Vitest, plain TS logic only
 ```
 
-Run lint and typecheck before declaring any task done.
+Android builds need JDK 17 (`JAVA_HOME`) and the Android SDK (`ANDROID_HOME`).
 
-## Navigation & Routing
+## Native code
 
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
+- `android/` and `ios/` are checked in and edited by hand. They started from the React Native 0.88.1 template (`com.penny.mobile`).
+- Packages are hoisted to the repo root (`bunfig.toml`), so `android/settings.gradle`, `android/app/build.gradle` and `ios/Podfile` resolve `react-native` and its tools through Node instead of `../node_modules`. Autolinking runs the CLI with `node` for the same reason, and because `npx` is blocked.
+- Add libraries with `bun add <pkg>` (pick the version the library documents for React Native 0.88). Native modules autolink; run `bun run pods` for iOS, and rebuild the app (Metro alone won't pick up native code).
+- Fonts live in `assets/fonts`; after changing them run `bunx react-native-asset` to copy them into both native projects.
 
-## Building with EAS
+## Navigation
 
-Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
-Docs: https://docs.expo.dev/eas/index.md
+- React Navigation, one native stack: `src/navigation/root-navigator.tsx`. Screens live in `src/screens/`; components and `lib/` stay at the app root.
+- Route names and params are typed in `src/navigation/types.ts`. Use `useAppNavigation()` from there, not a bare `useNavigation()`.
+- Only the current group's screens (signed out, setup, signed in) are registered; switching groups is done by changing the session or onboarding state, never by navigating.
 
-## Rules
+## Environment
 
-- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
-- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
-- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+`babel.config.js` loads the repo root `.env` and inlines the `RN_PUBLIC_*` variables it lists. Add a new one there and to `env.d.ts`.
