@@ -47,8 +47,9 @@ export const CAPTURE_SYSTEM_PROMPT = [
   "counterparty: who was paid or who paid, as a person or business would be named; null if unknown.",
   "accountLast4: the last digits of the user's account or card if shown (XX1234 → '1234').",
   "reference: the UPI ref, UTR, RRN or transaction ID if shown, digits and letters only.",
-  "occurredAt: the date and time of the transaction if the message states it, as ISO 8601 with",
-  "the +05:30 offset unless another is given; null if not stated.",
+  "date: the transaction date if the message states one, as YYYY-MM-DD; null if not stated.",
+  "time: the transaction time if the message states one, as 24-hour HH:MM in the message's own",
+  "time zone; null if no time is written. Never invent a time such as 00:00.",
   "confidence: 0 to 1, how sure you are of kind, amount and direction together.",
   "reason: one short sentence a person would understand, without repeating the whole message.",
 ].join(" ");

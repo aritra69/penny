@@ -15,6 +15,7 @@ import type { Vault } from "../vault.ts";
 import { findDuplicate } from "./duplicates.ts";
 import type { Extractor } from "./extract.ts";
 import { toMinorUnits } from "./money.ts";
+import { resolveOccurredAt } from "./occurred-at.ts";
 import { isOneTimeCode } from "./one-time-code.ts";
 
 export type CaptureInput = {
@@ -112,10 +113,7 @@ export function createCaptureService(
         return { outcome: "ignored", kind: read.kind, transaction: null };
       }
 
-      const statedAt = read.occurredAt ? Date.parse(read.occurredAt) : NaN;
-      const occurredAt = new Date(
-        Number.isNaN(statedAt) ? input.receivedAt : statedAt,
-      ).toISOString();
+      const occurredAt = resolveOccurredAt(read.date, read.time, input.receivedAt);
       const reference = digitsAndLetters(read.reference);
       const payment = {
         amount: read.kind === "spent" ? -minor : minor,
