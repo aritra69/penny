@@ -6,13 +6,13 @@ Open-source personal finance app (working name). Android-first React Native app,
 
 ## Layout
 
-| Path                                                   | What                                                 | Stack                                                                                                                               |
-| ------------------------------------------------------ | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/mobile`                                          | The app                                              | React Native 0.88 (React Native CLI, no Expo), React Navigation, NativeWind 4 (Tailwind v3), React Native Reusables (shadcn for RN) |
-| `apps/api`                                             | Auth + CRUD backend (`/api/auth/*`, `/transactions`) | Bun.serve routes, Drizzle ORM, Postgres (Docker in development), AES-256-GCM field encryption                                       |
-| `apps/web`, `apps/docs`                                | Web apps (still the create-turbo starters)           | Next.js 16                                                                                                                          |
-| `packages/design-system`                               | Penny's design system: tokens, components, motion    | React Native, NativeWind preset, Moti (Framer Motion's API on Reanimated), react-native-svg                                         |
-| `packages/eslint-config`, `packages/typescript-config` | Shared configs for web/docs/api                      | —                                                                                                                                   |
+| Path                                                   | What                                                                         | Stack                                                                                                                               |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/mobile`                                          | The app                                                                      | React Native 0.88 (React Native CLI, no Expo), React Navigation, NativeWind 4 (Tailwind v3), React Native Reusables (shadcn for RN) |
+| `apps/api`                                             | Auth, CRUD and message capture (`/api/auth/*`, `/transactions`, `/captures`) | Bun.serve routes, Drizzle ORM, Postgres (Docker in development), AES-256-GCM field encryption                                       |
+| `apps/web`, `apps/docs`                                | Web apps (still the create-turbo starters)                                   | Next.js 16                                                                                                                          |
+| `packages/design-system`                               | Penny's design system: tokens, components, motion                            | React Native, NativeWind preset, Moti (Framer Motion's API on Reanimated), react-native-svg                                         |
+| `packages/eslint-config`, `packages/typescript-config` | Shared configs for web/docs/api                                              | —                                                                                                                                   |
 
 Before working in `apps/mobile`, read `apps/mobile/AGENTS.md` (commands, the checked-in `android/`/`ios/` projects, navigation, env).
 

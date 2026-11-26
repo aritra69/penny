@@ -1,4 +1,5 @@
 import type { Auth } from "./auth.ts";
+import { createCaptureService, validateCapture, type Extractor } from "./capture/index.ts";
 import {
   DEFAULT_PAGE_LIMIT,
   DEFAULT_PAGE_OFFSET,
@@ -30,10 +31,18 @@ function intParam(url: URL, name: string, fallback: number, min: number, max: nu
   return Number.isInteger(n) && n >= min && n <= max ? n : null;
 }
 
-export type ServerOptions = { db: Db; auth: Auth; vault: Vault; port: number };
+export type ServerOptions = {
+  db: Db;
+  auth: Auth;
+  vault: Vault;
+  port: number;
+  /** Reads bank messages. Without one, POST /captures answers 503. */
+  extract?: Extractor;
+};
 
-export function startServer({ db, auth, vault, port }: ServerOptions) {
+export function startServer({ db, auth, vault, port, extract }: ServerOptions) {
   const transactions = createTransactionStore(db, vault);
+  const capture = extract ? createCaptureService(db, vault, transactions, extract) : null;
   const waitlist = createWaitlistStore(db);
 
   /** Runs `handler` with the signed-in user's ID, or answers 401. */
@@ -75,6 +84,23 @@ export function startServer({ db, auth, vault, port }: ServerOptions) {
             ? new Response(null, { status: 204 })
             : error(404, "not on the waitlist");
         },
+      },
+
+      // One bank SMS or payment-app notification from the phone. Answers with what Penny did:
+      // dropped (a one-time code, not stored), ignored, duplicate, saved, or review.
+      "/captures": {
+        POST: signedIn(async (req, userId) => {
+          if (!capture) return error(503, "reading messages isn't set up on this server");
+          const parsed = await readJson(req);
+          if (!parsed.ok) return error(400, "invalid JSON");
+          const result = validateCapture(parsed.body);
+          if (!result.ok) return error(422, "validation failed", result.errors);
+          const outcome = await capture.process(userId, result.value);
+          return json(
+            outcome,
+            outcome.outcome === "saved" || outcome.outcome === "review" ? 201 : 200,
+          );
+        }),
       },
 
       "/transactions": {
