@@ -8,6 +8,7 @@ import {
   hasSessionCookies,
   sessionChanged,
 } from "@/lib/auth/cookie-jar";
+import { isRoute } from "@/lib/auth/request-path";
 import * as SecureStorage from "@/lib/secure-storage";
 
 type NativeClientOptions = {
@@ -102,11 +103,10 @@ export function nativeClient({ origin, storagePrefix }: NativeClientOptions) {
         id: "penny-native",
         name: "Penny native",
         async init(url, options) {
-          const { pathname } = new URL(url, options?.baseURL);
-          if (pathname.endsWith("/get-session")) await hydrateSession();
+          if (isRoute(url, "/get-session")) await hydrateSession();
           // Read before a sign-out clears it: the API needs the cookie to end the session.
           const cookie = cookieHeader(await readJar());
-          if (pathname.endsWith("/sign-out")) await clearSession();
+          if (isRoute(url, "/sign-out")) await clearSession();
           return {
             url,
             options: {
@@ -119,7 +119,6 @@ export function nativeClient({ origin, storagePrefix }: NativeClientOptions) {
         },
         hooks: {
           async onSuccess(context) {
-            const { pathname } = new URL(context.request.url);
             const setCookie = context.response.headers.get("set-cookie");
             if (setCookie && hasSessionCookies(setCookie)) {
               const changed = await withJar(async () => {
@@ -130,7 +129,7 @@ export function nativeClient({ origin, storagePrefix }: NativeClientOptions) {
               });
               if (changed) store?.notify("$sessionSignal");
             }
-            if (pathname.endsWith("/get-session")) {
+            if (isRoute(context.request.url, "/get-session")) {
               if (context.data) {
                 await SecureStorage.setItem(sessionKey, JSON.stringify(context.data));
               } else {
