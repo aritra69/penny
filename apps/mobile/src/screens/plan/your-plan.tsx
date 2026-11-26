@@ -40,8 +40,8 @@ export default function YourPlanScreen() {
         ? `Free until ${formatFullDate(trialEndsAt)}, then ${plusPrice}`
         : `${plusPrice}, billed by Google Play`
       : trialEndsAt
-        ? `Paid once. Your free month runs until ${formatFullDate(trialEndsAt)}, then Penny uses your key.`
-        : `Paid once, ${planPrice("own-key")}. Penny sorts with your OpenAI key.`;
+        ? `Paid once. Free month until ${formatFullDate(trialEndsAt)}, then your key.`
+        : `Paid once, ${planPrice("own-key")}. Sorted with your OpenAI key.`;
 
   const reminder =
     onPlus && trialEndsAt
@@ -55,7 +55,7 @@ export default function YourPlanScreen() {
 
   const footnote = onPlus
     ? trialEndsAt
-      ? `Cancel before ${formatDay(trialEndsAt)} and you won't be charged. Everything stays unlocked until then, and your history stays stored encrypted.`
+      ? `Cancel before ${formatDay(trialEndsAt)} and pay nothing. Your history stays stored encrypted.`
       : "Cancel any time in Google Play. Your history stays stored encrypted."
     : "Your history stays stored encrypted.";
 
@@ -94,8 +94,8 @@ export default function YourPlanScreen() {
             </View>
             <Text className="text-label">
               {trialEndsAt
-                ? `Your free month keeps running until ${formatDay(trialEndsAt)}. After that Penny uses your key and Plus never charges you.`
-                : "Penny uses your key from then on, and Plus stops charging you."}
+                ? `Keep your free month until ${formatDay(trialEndsAt)}, then never pay for Plus.`
+                : "Plus stops charging you."}
             </Text>
             <Button
               variant="outline"

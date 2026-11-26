@@ -54,9 +54,7 @@ export default function AppsScreen() {
         </Button>
       }
     >
-      <StepIntro title="Which apps can Penny read?">
-        Only alerts from these are read. Everything else is ignored on the phone.
-      </StepIntro>
+      <StepIntro title="Which apps can Penny read?">Only these are read.</StepIntro>
 
       {apps ? (
         <View role="group" aria-label="Apps found on this phone" className="px-gutter pt-7">
@@ -80,7 +78,7 @@ export default function AppsScreen() {
 
       <View className="gap-2 px-gutter pt-7">
         <Text className="font-sans-bold text-caption">Never read</Text>
-        <Text>WhatsApp, Gmail, chats, personal SMS, and any message with a one-time code.</Text>
+        <Text>Chats, email, personal SMS and one-time codes.</Text>
       </View>
     </OnboardingScreen>
   );

@@ -31,9 +31,7 @@ export default function GenderScreen() {
         </Button>
       }
     >
-      <StepIntro title="Which one are you?">
-        Saved on this phone with the rest of your setup.
-      </StepIntro>
+      <StepIntro title="Which one are you?" />
 
       <View role="radiogroup" aria-label="Gender" className="flex-row gap-3 px-gutter pt-7">
         {CHOICES.map((choice) => (

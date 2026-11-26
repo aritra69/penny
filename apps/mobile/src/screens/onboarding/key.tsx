@@ -64,7 +64,7 @@ export default function OpenAIKeyScreen() {
           <View className="flex-row items-start gap-2.5">
             <Icon name="lock" size={18} />
             <Text variant="caption" className="flex-1">
-              Stored encrypted on this phone. Never logged, never backed up.
+              Stored encrypted on this phone, never backed up.
             </Text>
           </View>
           <Button size="lg" disabled={checking || !looksLikeOpenAIKey(key)} onPress={check}>
@@ -75,8 +75,7 @@ export default function OpenAIKeyScreen() {
       }
     >
       <StepIntro title="What's your OpenAI key?">
-        Penny uses your own key to sort each message. You pay OpenAI directly, under a paisa per
-        message.
+        You pay OpenAI directly, under a paisa a message.
       </StepIntro>
 
       <View className="gap-3 px-gutter pt-12">

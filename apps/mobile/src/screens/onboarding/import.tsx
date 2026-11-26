@@ -55,7 +55,7 @@ export default function ImportScreen() {
       }
     >
       <StepIntro title="Read your last 6 months?">
-        Penny sorts your old bank SMS so budgets start from real numbers.
+        So your budgets start from real numbers.
       </StepIntro>
 
       {progress ? (

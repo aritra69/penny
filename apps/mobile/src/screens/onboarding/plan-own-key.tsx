@@ -76,8 +76,7 @@ export default function PayOnceScreen() {
       }
     >
       <StepIntro title="Pay once, bring your own key">
-        One payment unlocks Penny for good. Messages are sorted with your OpenAI key, so OpenAI
-        bills you directly.
+        Penny is yours for good. OpenAI bills you directly for sorting.
       </StepIntro>
 
       <View className="mx-gutter mt-8 gap-3.5">

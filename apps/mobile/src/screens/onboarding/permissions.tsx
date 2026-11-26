@@ -77,7 +77,7 @@ export default function PermissionsScreen() {
       }
     >
       <StepIntro title="Can Penny see your alerts?">
-        Two switches in Android settings. Penny can only read, never send or pay.
+        Read-only. Penny can never send or pay.
       </StepIntro>
 
       {permissions ? (
@@ -93,46 +93,42 @@ export default function PermissionsScreen() {
             }}
           />
 
-          {smsAllowed ? (
-            <StatusRow title="Bank SMS" subtitle="Allowed" done />
-          ) : (
+          {permissions.sms === "restricted" ? (
+            // Sideloaded installs: Android locks SMS until "Allow restricted settings" is on.
             <View className="gap-3.5 pb-5 pt-[18px]">
               <View className="gap-0.5">
                 <Text className="font-sans-bold text-body-lg">Bank SMS</Text>
-                <Text variant="caption">
-                  Android locks this for apps installed outside the Play Store. Unlock it once:
-                </Text>
+                <Text variant="caption">Locked for apps from outside the Play Store:</Text>
               </View>
               <View className="flex-row gap-3">
                 <UnlockStep number={1} sketch={<AppInfoMenuSketch />}>
-                  App info, tap the menu
+                  Tap ⋮ in App info
                 </UnlockStep>
                 <UnlockStep number={2} sketch={<RestrictedSettingsSketch />}>
                   Allow restricted settings
                 </UnlockStep>
                 <UnlockStep number={3} sketch={<AllowSmsSketch />}>
-                  Back here, allow SMS
+                  Allow SMS here
                 </UnlockStep>
               </View>
-              {permissions.sms === "restricted" ? (
-                <Button variant="outline" disabled={busy} onPress={ask(device.openAppInfo)}>
-                  <Text>Open App info</Text>
-                </Button>
-              ) : (
-                <Button variant="outline" disabled={busy} onPress={ask(device.requestSmsAccess)}>
-                  <Text>Allow SMS</Text>
-                </Button>
-              )}
+              <Button variant="outline" disabled={busy} onPress={ask(device.openAppInfo)}>
+                <Text>Open App info</Text>
+              </Button>
             </View>
+          ) : (
+            <StatusRow
+              divider
+              title="Bank SMS"
+              subtitle={smsAllowed ? "Allowed" : "Not allowed yet"}
+              done={smsAllowed}
+              action={{ label: "Allow", disabled: busy, onPress: ask(device.requestSmsAccess) }}
+            />
           )}
-
           <StatusRow
             divider
             title="Battery: Unrestricted"
             subtitle={
-              permissions.battery === "unrestricted"
-                ? "Allowed"
-                : "So Android doesn't put Penny to sleep"
+              permissions.battery === "unrestricted" ? "Allowed" : "So Penny isn't put to sleep"
             }
             done={permissions.battery === "unrestricted"}
             action={{

@@ -35,7 +35,7 @@ export default function SmsAllowedScreen() {
           Penny can now read your bank SMS
         </Text>
         <Text className="text-primary-foreground">
-          Only from bank senders. Messages with one-time codes are dropped on the phone.
+          Only bank senders. One-time codes are dropped on the phone.
         </Text>
       </View>
     </OnboardingScreen>

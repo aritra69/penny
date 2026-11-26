@@ -80,7 +80,7 @@ export default function AccountsScreen() {
       }
     >
       <StepIntro title="Are these all yours?">
-        Money moving between them is a transfer, not spending or income.
+        Money between them is a transfer, not spending.
       </StepIntro>
 
       {found ? (

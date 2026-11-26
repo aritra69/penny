@@ -42,7 +42,7 @@ export default function KeyWorksScreen() {
         className="mt-16"
       />
       <ResultIntro title="Your key works">
-        Reached {model} in {formatLatency(latencyMs)}. It&apos;s saved encrypted on this phone.
+        Reached {model} in {formatLatency(latencyMs)}.
       </ResultIntro>
     </OnboardingScreen>
   );
