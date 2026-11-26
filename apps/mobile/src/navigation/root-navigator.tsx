@@ -27,6 +27,8 @@ import FreeMonthStartedScreen from "@/src/screens/onboarding/plan-started";
 import PrivacyScreen from "@/src/screens/onboarding/privacy";
 import SmsAllowedScreen from "@/src/screens/onboarding/sms-ok";
 import SetupStepsScreen from "@/src/screens/onboarding/steps";
+import TrialEndingScreen from "@/src/screens/plan/trial-ending";
+import YourPlanScreen from "@/src/screens/plan/your-plan";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -81,6 +83,12 @@ export function RootNavigator({ signedIn }: { signedIn: boolean }) {
       ) : (
         <Stack.Group key="app">
           <Stack.Screen name="home" component={HomeScreen} />
+          <Stack.Screen name="your-plan" component={YourPlanScreen} />
+          <Stack.Screen name="trial-ending" component={TrialEndingScreen} />
+          {/* Switching to the own key from Settings reuses setup's ₹999 and key screens. */}
+          <Stack.Screen name="plan-own-key" component={PayOnceScreen} />
+          <Stack.Screen name="key" component={OpenAIKeyScreen} />
+          <Stack.Screen name="key-ok" component={KeyWorksScreen} />
           {__DEV__ ? <Stack.Screen name="design-system" component={DesignSystemScreen} /> : null}
         </Stack.Group>
       )}

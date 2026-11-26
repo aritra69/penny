@@ -11,7 +11,7 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
   const { data: session } = authClient.useSession();
-  const { reset } = useOnboarding();
+  const { state, reset } = useOnboarding();
   const [signingOut, setSigningOut] = useState(false);
 
   async function signOut() {
@@ -30,6 +30,20 @@ export default function HomeScreen() {
         <Text variant="muted">Signed in as {session?.user.email}</Text>
       </View>
       <View className="gap-3">
+        {/* Until Home has its Settings, Your plan is reached from here. */}
+        <Button variant="outline" size="lg" onPress={() => navigation.navigate("your-plan")}>
+          <Text>Your plan</Text>
+        </Button>
+        {__DEV__ && state.plan === "subscription" && state.trialEndsAt ? (
+          <Button
+            variant="link"
+            size="sm"
+            className="self-center"
+            onPress={() => navigation.navigate("trial-ending")}
+          >
+            <Text>Preview the free month ending</Text>
+          </Button>
+        ) : null}
         {__DEV__ ? (
           <Button
             variant="link"
