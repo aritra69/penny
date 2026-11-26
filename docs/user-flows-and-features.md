@@ -83,7 +83,7 @@ flowchart TD
     Done --> Home
 ```
 
-1. **Splash**, then **Welcome**: "Know where your money goes, without typing a thing." Continue with Google, or email and password (log in, create account, forgot password).
+1. **Splash**, then **Welcome**: one line, "Know where your money goes." Log in with Google or email and password (and forgot password). **Create account** offers Google or email; email asks one thing per screen: name, then email, then a password.
 2. **Privacy promise**: the principles above in plain words. The user ticks "I've read this and the terms" and taps Agree and continue.
 3. **Gender**: the user picks one of two figures, female or male. Saved on the phone with the rest of setup. Not one of the five numbered steps.
 4. **Plan**: subscription ($1.99 a month, Penny does the sorting) or the user's own OpenAI key ($14.99 once, they pay OpenAI directly). Payment is not built: a test popup lets the tester choose whether it succeeds or fails. Setup goes on only after a payment succeeds.

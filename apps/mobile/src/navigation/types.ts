@@ -7,6 +7,10 @@ import type { OnboardingStep } from "@/lib/onboarding/state";
 export type RootStackParamList = {
   "sign-in": undefined;
   "sign-up": undefined;
+  // Creating an account with email, one field per screen; each step carries what's been typed.
+  "sign-up-name": undefined;
+  "sign-up-email": { name: string };
+  "sign-up-password": { name: string; email: string };
   home: undefined;
   "design-system": undefined;
 } & { [Step in OnboardingStep]: undefined };

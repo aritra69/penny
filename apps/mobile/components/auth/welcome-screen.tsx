@@ -6,11 +6,9 @@ import { IllustrationSlot, OnboardingScreen } from "@/components/onboarding/onbo
 import { authClient } from "@/lib/auth/client";
 import {
   hasErrors,
-  MIN_PASSWORD_LENGTH,
   validateSignIn,
-  validateSignUp,
   type FieldErrors,
-  type SignUpFields,
+  type SignInFields,
 } from "@/lib/auth-validation";
 import { useAppNavigation } from "@/src/navigation/types";
 import { Button, colors, LabeledDivider, Text, TextField } from "@repo/design-system";
@@ -26,16 +24,19 @@ const HERO_HEIGHT = 240;
 const HERO_MIN_HEIGHT = 96;
 
 type WelcomeScreenProps = {
-  /** "sign-in": log in to an account · "sign-up": create one. Same screen, one more field. */
+  /**
+   * "sign-in": log in with Google or email and password.
+   * "sign-up": choose Google or email; email goes on to one screen per field (sign-up-name, …).
+   */
   mode: "sign-in" | "sign-up";
 };
 
-/** Welcome and sign in: the first screen after the splash. */
+/** Welcome: the first screen after the splash, for logging in or creating an account. */
 export function WelcomeScreen({ mode }: WelcomeScreenProps) {
   const signUp = mode === "sign-up";
   const navigation = useAppNavigation();
-  const [fields, setFields] = useState<SignUpFields>({ name: "", email: "", password: "" });
-  const [errors, setErrors] = useState<FieldErrors<SignUpFields>>({});
+  const [fields, setFields] = useState<SignInFields>({ email: "", password: "" });
+  const [errors, setErrors] = useState<FieldErrors<SignInFields>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -46,11 +47,11 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
   const [heroSpace, setHeroSpace] = useState(0);
   const heroHeight = Math.min(HERO_HEIGHT, heroSpace);
 
-  const set = (key: keyof SignUpFields) => (value: string) =>
+  const set = (key: keyof SignInFields) => (value: string) =>
     setFields((f) => ({ ...f, [key]: value }));
 
   async function submit() {
-    const found = signUp ? validateSignUp(fields) : validateSignIn(fields);
+    const found = validateSignIn(fields);
     setErrors(found);
     setFormError(null);
     setNotice(null);
@@ -58,21 +59,12 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
 
     setSubmitting(true);
     try {
-      const email = fields.email.trim();
-      const { error } = signUp
-        ? await authClient.signUp.email({
-            name: fields.name.trim(),
-            email,
-            password: fields.password,
-          })
-        : await authClient.signIn.email({ email, password: fields.password });
-      // On success the root layout sees the new session and moves on to setup or Home.
-      if (error) {
-        setFormError(
-          error.message ??
-            (signUp ? "Couldn't create your account. Try again." : "Couldn't log in. Try again."),
-        );
-      }
+      const { error } = await authClient.signIn.email({
+        email: fields.email.trim(),
+        password: fields.password,
+      });
+      // On success the root navigator sees the new session and moves on to setup or Home.
+      if (error) setFormError(error.message ?? "Couldn't log in. Try again.");
     } catch {
       setFormError("Couldn't reach Penny. Check your connection and try again.");
     } finally {
@@ -89,10 +81,16 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
               {formError}
             </Text>
           ) : null}
-          <Button size="lg" disabled={submitting} onPress={submit}>
-            {submitting ? <ActivityIndicator size="small" color={colors.paper} /> : null}
-            <Text>{signUp ? "Create account" : "Log in"}</Text>
-          </Button>
+          {signUp ? (
+            <Button size="lg" onPress={() => navigation.push("sign-up-name")}>
+              <Text>Sign up with email</Text>
+            </Button>
+          ) : (
+            <Button size="lg" disabled={submitting} onPress={submit}>
+              {submitting ? <ActivityIndicator size="small" color={colors.paper} /> : null}
+              <Text>Log in</Text>
+            </Button>
+          )}
           <Button
             variant="link"
             size="sm"
@@ -106,9 +104,10 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
         </>
       }
     >
-      {/* Takes whatever height the form doesn't need, so the whole screen fits without scrolling. */}
+      {/* Takes whatever height the form doesn't need, so the whole screen fits without scrolling;
+          the picture sits in the middle of it when there is room to spare. */}
       <View
-        className="flex-1 justify-end pt-4"
+        className="flex-1 justify-center pt-4"
         onLayout={(event) => setHeroSpace(Math.round(event.nativeEvent.layout.height) - 16)}
       >
         {heroHeight >= HERO_MIN_HEIGHT ? (
@@ -121,78 +120,66 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
 
       <View className="gap-4 px-gutter pt-5">
         <GoogleButton disabled={submitting} onError={setFormError} />
-        <LabeledDivider label="or" />
-        {signUp ? (
-          <TextField
-            label="Name"
-            value={fields.name}
-            onChangeText={set("name")}
-            error={errors.name}
-            autoComplete="name"
-            textContentType="name"
-            returnKeyType="next"
-            onSubmitEditing={() => emailRef.current?.focus()}
-            submitBehavior="submit"
-          />
-        ) : null}
-        <TextField
-          ref={emailRef}
-          label="Email"
-          value={fields.email}
-          onChangeText={set("email")}
-          error={errors.email}
-          placeholder="you@example.com"
-          autoCapitalize="none"
-          autoCorrect={false}
-          autoComplete="email"
-          keyboardType="email-address"
-          textContentType="emailAddress"
-          returnKeyType="next"
-          onSubmitEditing={() => passwordRef.current?.focus()}
-          submitBehavior="submit"
-          action={
-            fields.email
-              ? { icon: "clear-circle", label: "Clear email", onPress: () => set("email")("") }
-              : undefined
-          }
-        />
-        <View>
-          <TextField
-            ref={passwordRef}
-            label="Password"
-            value={fields.password}
-            onChangeText={set("password")}
-            error={errors.password}
-            hint={signUp ? `At least ${MIN_PASSWORD_LENGTH} characters` : undefined}
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoComplete={signUp ? "new-password" : "current-password"}
-            textContentType={signUp ? "newPassword" : "password"}
-            returnKeyType="go"
-            onSubmitEditing={submit}
-            action={{
-              icon: "eye",
-              label: showPassword ? "Hide password" : "Show password",
-              onPress: () => setShowPassword((shown) => !shown),
-            }}
-          />
-          {signUp ? null : (
-            <Button
-              variant="link"
-              size="sm"
-              className="self-end px-0"
-              onPress={() => setNotice("Password reset isn't available on this server yet.")}
-            >
-              <Text className="text-caption">Forgot password?</Text>
-            </Button>
-          )}
-          {notice ? (
-            <Text role="alert" variant="caption">
-              {notice}
-            </Text>
-          ) : null}
-        </View>
+        {signUp ? null : (
+          <>
+            <LabeledDivider label="or" />
+            <TextField
+              ref={emailRef}
+              label="Email"
+              value={fields.email}
+              onChangeText={set("email")}
+              error={errors.email}
+              placeholder="you@example.com"
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="email"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              submitBehavior="submit"
+              action={
+                fields.email
+                  ? { icon: "clear-circle", label: "Clear email", onPress: () => set("email")("") }
+                  : undefined
+              }
+            />
+            <View>
+              <TextField
+                ref={passwordRef}
+                label="Password"
+                value={fields.password}
+                onChangeText={set("password")}
+                error={errors.password}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="current-password"
+                textContentType="password"
+                returnKeyType="go"
+                onSubmitEditing={submit}
+                action={{
+                  icon: "eye",
+                  label: showPassword ? "Hide password" : "Show password",
+                  onPress: () => setShowPassword((shown) => !shown),
+                }}
+              />
+              <Button
+                variant="link"
+                size="sm"
+                className="self-end px-0"
+                onPress={() => setNotice("Password reset isn't available on this server yet.")}
+              >
+                <Text className="text-caption">Forgot password?</Text>
+              </Button>
+              {notice ? (
+                <Text role="alert" variant="caption">
+                  {notice}
+                </Text>
+              ) : null}
+            </View>
+          </>
+        )}
       </View>
     </OnboardingScreen>
   );

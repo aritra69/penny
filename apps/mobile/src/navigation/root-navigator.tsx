@@ -5,6 +5,9 @@ import { useOnboarding } from "@/lib/onboarding/store";
 import type { RootStackParamList, RouteName } from "@/src/navigation/types";
 import SignInScreen from "@/src/screens/auth/sign-in";
 import SignUpScreen from "@/src/screens/auth/sign-up";
+import SignUpEmailScreen from "@/src/screens/auth/sign-up-email";
+import SignUpNameScreen from "@/src/screens/auth/sign-up-name";
+import SignUpPasswordScreen from "@/src/screens/auth/sign-up-password";
 import DesignSystemScreen from "@/src/screens/design-system";
 import HomeScreen from "@/src/screens/home";
 import AccountsScreen from "@/src/screens/onboarding/accounts";
@@ -47,6 +50,9 @@ export function RootNavigator({ signedIn }: { signedIn: boolean }) {
         <Stack.Group key="auth">
           <Stack.Screen name="sign-in" component={SignInScreen} />
           <Stack.Screen name="sign-up" component={SignUpScreen} />
+          <Stack.Screen name="sign-up-name" component={SignUpNameScreen} />
+          <Stack.Screen name="sign-up-email" component={SignUpEmailScreen} />
+          <Stack.Screen name="sign-up-password" component={SignUpPasswordScreen} />
         </Stack.Group>
       ) : !onboarded ? (
         <Stack.Group key="onboarding">
