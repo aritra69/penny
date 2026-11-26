@@ -68,7 +68,7 @@ export default function BudgetsScreen() {
       }
     >
       <StepIntro title="Start with these budgets?">
-        Your 6-month averages, rounded up a little. Change any of them.
+        Your 6-month averages. Change any of them.
       </StepIntro>
 
       {suggestions ? (

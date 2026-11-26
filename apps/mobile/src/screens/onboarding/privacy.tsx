@@ -47,25 +47,22 @@ export default function PrivacyScreen() {
     >
       <View className="px-gutter pt-4">
         <Text role="heading" aria-level={1} className="font-display text-[26px] leading-8">
-          Before you start, how Penny treats your money data
+          How Penny treats your money data
         </Text>
       </View>
 
       <View role="list" className="gap-5 pl-[22px] pr-gutter pt-7">
         <Point>
-          <Text className="bg-highlight font-sans-bold">Your data is stored encrypted.</Text> Penny
-          keeps your transactions on its servers, with amounts, shops and notes encrypted before
-          they&apos;re saved.
+          <Text className="bg-highlight font-sans-bold">Stored encrypted</Text> on Penny&apos;s
+          servers.
         </Point>
-        <Point>Penny reads only the apps you pick. WhatsApp, email and chats are never read.</Point>
+        <Point>Only the apps you pick are read.</Point>
+        <Point>One-time codes are dropped on the phone.</Point>
         <Point>
-          Messages with one-time codes are dropped on the phone before anything else happens.
-        </Point>
-        <Point>
-          To sort a message, Penny sends its text to OpenAI, and{" "}
+          Only a message&apos;s text goes to OpenAI,{" "}
           <Text className="font-sans-bold">nothing else</Text>.
         </Point>
-        <Point>Penny is read-only. It can never send money or pay a bill.</Point>
+        <Point>Read-only. Penny can never move money.</Point>
       </View>
 
       <Pressable

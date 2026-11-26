@@ -39,9 +39,7 @@ export default function SetupStepsScreen() {
         >
           Set up Penny in {STEPS.length} steps
         </Text>
-        <Text className="text-primary-foreground">
-          About 3 minutes. You can stop and come back.
-        </Text>
+        <Text className="text-primary-foreground">About 3 minutes.</Text>
       </View>
       <StepList tone="dark" steps={STEPS} className="mx-gutter mt-10" />
     </OnboardingScreen>

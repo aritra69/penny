@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { View } from "react-native";
 
 import { IllustrationSlot, OnboardingScreen } from "@/components/onboarding/onboarding-screen";
-import { FactList, NotificationPreview } from "@/components/plan/plan-parts";
+import { FactList } from "@/components/plan/plan-parts";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
 import { planPrice } from "@/lib/plans";
@@ -38,25 +38,15 @@ export default function FreeMonthStartedScreen() {
         inked={false}
         anchor="center"
         height={200}
-        className="mt-14"
+        className="mt-8"
       />
 
       <View className="gap-2.5 px-gutter pt-7">
         <Text variant="title" className="leading-[34px]">
           Your free month has started
         </Text>
-        <Text>
-          Everything is unlocked until {formatDay(endsAt)}. Here&apos;s the reminder you&apos;ll get
-          two days before it ends:
-        </Text>
+        <Text>We&apos;ll remind you on {formatDay(reminderDate(endsAt))}, before it ends.</Text>
       </View>
-
-      <NotificationPreview
-        className="mx-gutter mt-6"
-        when={formatDay(reminderDate(endsAt))}
-        title="Your free month ends in 2 days"
-        body={`Plus starts on ${formatDay(endsAt)} at ${price}. Tap to keep it or cancel.`}
-      />
 
       <FactList
         className="mx-gutter mt-7"

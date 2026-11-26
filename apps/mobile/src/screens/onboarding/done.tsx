@@ -32,8 +32,7 @@ export default function AllSetScreen() {
         className="mt-16"
       />
       <ResultIntro title="You're all set">
-        New payments sort themselves as they arrive. Your budgets are ready to check, and you can
-        change anything in Settings.
+        New payments sort themselves. Your budgets are ready.
       </ResultIntro>
       {trialEndsAt ? (
         <View className="mx-gutter mt-7 flex-row items-start gap-3 border-1.5 border-foreground px-4 py-3.5">
