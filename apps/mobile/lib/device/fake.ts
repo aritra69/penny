@@ -9,8 +9,9 @@ import type {
 import { matchInstalled } from "@/lib/finance-apps/catalogue";
 
 /**
- * STUB. Stands in for the native module that doesn't exist yet. It reads nothing from the phone
- * and asks Android for nothing: every value below is sample data from the design canvas.
+ * STUB. Stands in for the parts of the native module that don't exist yet, and for all of it on
+ * iOS. It reads nothing from the phone and asks Android for nothing: every value below is sample
+ * data from the design canvas.
  */
 
 const rupees = (amount: number) => amount * 100;
