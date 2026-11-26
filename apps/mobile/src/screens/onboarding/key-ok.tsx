@@ -1,4 +1,4 @@
-import { Redirect, useRouter } from "expo-router";
+import { useEffect } from "react";
 
 import {
   IllustrationSlot,
@@ -8,20 +8,26 @@ import {
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
 import { formatLatency } from "@/lib/openai";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, Text } from "@repo/design-system";
 
 export default function KeyWorksScreen() {
   useOnboardingStep("key-ok");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state } = useOnboarding();
 
-  if (!state.keyCheck) return <Redirect href="/key" />;
+  // Reopened here without a checked key (e.g. the key was cleared): go back to entering one.
+  useEffect(() => {
+    if (!state.keyCheck) navigation.replace("key");
+  }, [navigation, state.keyCheck]);
+
+  if (!state.keyCheck) return null;
   const { model, latencyMs } = state.keyCheck;
 
   return (
     <OnboardingScreen
       footer={
-        <Button size="lg" onPress={() => router.push("/apps")}>
+        <Button size="lg" onPress={() => navigation.push("apps")}>
           <Text>Next</Text>
         </Button>
       }

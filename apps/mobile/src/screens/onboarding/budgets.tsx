@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -13,11 +12,12 @@ import {
 } from "@/lib/onboarding/budgets";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, formatMoney, Stepper, Text } from "@repo/design-system";
 
 export default function BudgetsScreen() {
   const { back } = useOnboardingStep("budgets", "import");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
   const [suggestions, setSuggestions] = useState<BudgetSuggestions | null>(null);
   const [edits, setEdits] = useState<BudgetAmounts>({});
@@ -44,12 +44,12 @@ export default function BudgetsScreen() {
   function useThese() {
     if (!suggestions) return;
     update({ budgets: { status: "set", currency: suggestions.currency, amounts } });
-    router.push("/done");
+    navigation.push("done");
   }
 
   function later() {
     update({ budgets: { status: "later" } });
-    router.push("/done");
+    navigation.push("done");
   }
 
   return (

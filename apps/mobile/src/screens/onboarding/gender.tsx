@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { View } from "react-native";
 
 import { FigureChoice } from "@/components/onboarding/figure-choice";
@@ -6,6 +5,7 @@ import { OnboardingScreen, StepIntro } from "@/components/onboarding/onboarding-
 import type { Gender } from "@/lib/onboarding/state";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, Text } from "@repo/design-system";
 
 /** Both figures in one picture: the woman on the left, the man on the right. */
@@ -18,7 +18,7 @@ const CHOICES: { value: Gender; label: string; side: "left" | "right" }[] = [
 
 export default function GenderScreen() {
   const { back } = useOnboardingStep("gender", "privacy");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
 
   return (
@@ -26,7 +26,7 @@ export default function GenderScreen() {
       leading="back"
       onLeadingPress={back}
       footer={
-        <Button size="lg" disabled={!state.gender} onPress={() => router.push("/plan")}>
+        <Button size="lg" disabled={!state.gender} onPress={() => navigation.push("plan")}>
           <Text>Next</Text>
         </Button>
       }

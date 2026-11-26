@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -7,6 +6,7 @@ import { device, type ImportProgress } from "@/lib/device";
 import { stepCounter } from "@/lib/onboarding/state";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, ProgressBar, Text } from "@repo/design-system";
 
 const MONTHS = 6;
@@ -18,7 +18,7 @@ const count = (n: number) => n.toLocaleString("en-IN");
 
 export default function ImportScreen() {
   const { back } = useOnboardingStep("import", "accounts");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
   const [progress, setProgress] = useState<ImportProgress | null>(null);
 
@@ -30,12 +30,12 @@ export default function ImportScreen() {
 
   function keepReading() {
     update({ importChoice: "background" });
-    router.push("/budgets");
+    navigation.push("budgets");
   }
 
   function skip() {
     update({ importChoice: "skipped" });
-    router.push("/done");
+    navigation.push("done");
   }
 
   return (

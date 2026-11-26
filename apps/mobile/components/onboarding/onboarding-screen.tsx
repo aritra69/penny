@@ -1,8 +1,8 @@
-import { StatusBar } from "expo-status-bar";
 import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
+  StatusBar,
   View,
   type ImageSourcePropType,
 } from "react-native";
@@ -41,7 +41,7 @@ export function OnboardingScreen({
       // On both platforms: Android is edge-to-edge, so the window doesn't resize for the keyboard.
       behavior="padding"
     >
-      <StatusBar style={dark ? "light" : "dark"} />
+      <StatusBar barStyle={dark ? "light-content" : "dark-content"} />
       {leading ? (
         <ScreenHeader leading={leading} onLeadingPress={onLeadingPress} step={counter} />
       ) : null}
@@ -89,7 +89,7 @@ export function ResultIntro({ title, children }: { title: string; children: Reac
 /**
  * A picture from the design canvas, cropped to a band like the boards do. The art is black ink
  * on a transparent background, so it is tinted with the ink token, the way icons are: it follows
- * the theme's ink rather than the system setting (Penny is light-only for now).
+ * the theme's ink rather than the system setting (Penny is light-only).
  * Without a `source` (pictures not in the app's assets yet) it holds the place in grey.
  */
 export function IllustrationSlot({

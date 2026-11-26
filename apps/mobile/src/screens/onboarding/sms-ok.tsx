@@ -1,20 +1,24 @@
-import { useRouter } from "expo-router";
 import { View } from "react-native";
 
 import { OnboardingScreen } from "@/components/onboarding/onboarding-screen";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, colors, Icon, Text } from "@repo/design-system";
 
 export default function SmsAllowedScreen() {
   useOnboardingStep("sms-ok");
-  const router = useRouter();
+  const navigation = useAppNavigation();
 
   return (
     <OnboardingScreen
       tone="dark"
       footer={
         // Replaced, not pushed: back from "Your accounts" goes to the permissions step.
-        <Button variant="ghost" className="self-center" onPress={() => router.replace("/accounts")}>
+        <Button
+          variant="ghost"
+          className="self-center"
+          onPress={() => navigation.replace("accounts")}
+        >
           <Text className="text-body-lg text-primary-foreground">Close</Text>
         </Button>
       }

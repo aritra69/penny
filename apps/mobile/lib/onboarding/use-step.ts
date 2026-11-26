@@ -1,8 +1,9 @@
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 
 import type { OnboardingStep } from "@/lib/onboarding/state";
 import { useOnboarding } from "@/lib/onboarding/store";
+import { useAppNavigation } from "@/src/navigation/types";
 
 /**
  * Call at the top of an onboarding screen. Records the screen as the place to come back to, and
@@ -10,7 +11,7 @@ import { useOnboarding } from "@/lib/onboarding/store";
  * and there is nothing behind it.
  */
 export function useOnboardingStep(step: OnboardingStep, previous?: OnboardingStep) {
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { update } = useOnboarding();
 
   useFocusEffect(
@@ -20,9 +21,9 @@ export function useOnboardingStep(step: OnboardingStep, previous?: OnboardingSte
   );
 
   const back = useCallback(() => {
-    if (router.canGoBack()) router.back();
-    else if (previous) router.replace(`/${previous}`);
-  }, [router, previous]);
+    if (navigation.canGoBack()) navigation.goBack();
+    else if (previous) navigation.replace(previous);
+  }, [navigation, previous]);
 
   return { back };
 }

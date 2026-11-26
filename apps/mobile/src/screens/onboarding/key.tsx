@@ -1,8 +1,6 @@
-import * as Clipboard from "expo-clipboard";
-import { useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Linking, View } from "react-native";
 
 import { OnboardingScreen, StepIntro } from "@/components/onboarding/onboarding-screen";
 import { stepCounter } from "@/lib/onboarding/state";
@@ -10,15 +8,16 @@ import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
 import { checkOpenAIKey, looksLikeOpenAIKey } from "@/lib/openai";
 import { saveOpenAIKey } from "@/lib/openai-key";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, colors, Icon, Input, Text } from "@repo/design-system";
 
 const KEYS_URL = "https://platform.openai.com/api-keys";
 
 export default function OpenAIKeyScreen() {
   const { back } = useOnboardingStep("key", "steps");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
-  // The key lives in this field until it is checked, then only in SecureStore.
+  // The key lives in this field until it is checked, then only in the Keychain.
   const [key, setKey] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
@@ -29,7 +28,7 @@ export default function OpenAIKeyScreen() {
   }
 
   async function paste() {
-    const text = await Clipboard.getStringAsync().catch(() => "");
+    const text = await Clipboard.getString().catch(() => "");
     if (text.trim()) change(text.trim());
   }
 
@@ -38,7 +37,7 @@ export default function OpenAIKeyScreen() {
     setError(null);
     try {
       const result = await checkOpenAIKey(key, {
-        preferredModel: process.env.EXPO_PUBLIC_OPENAI_MODEL || undefined,
+        preferredModel: process.env.RN_PUBLIC_OPENAI_MODEL || undefined,
       });
       if (!result.ok) {
         setError(result.message);
@@ -47,7 +46,7 @@ export default function OpenAIKeyScreen() {
       await saveOpenAIKey(key);
       update({ keyCheck: { model: result.model, latencyMs: result.latencyMs } });
       setKey("");
-      router.push("/key-ok");
+      navigation.push("key-ok");
     } catch {
       setError("Couldn't save the key on this phone. Try again.");
     } finally {
@@ -110,7 +109,7 @@ export default function OpenAIKeyScreen() {
           variant="link"
           size="sm"
           className="self-start px-0"
-          onPress={() => WebBrowser.openBrowserAsync(KEYS_URL)}
+          onPress={() => Linking.openURL(KEYS_URL)}
         >
           <Text>Where do I get a key?</Text>
         </Button>

@@ -1,5 +1,3 @@
-import * as Crypto from "expo-crypto";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 
@@ -8,6 +6,8 @@ import { device, type FoundAccount } from "@/lib/device";
 import { stepCounter, toggleId, type AccountChoices } from "@/lib/onboarding/state";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { randomUUID } from "@/lib/uuid";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, formatMoney, Icon, SelectRow, Text, TextField } from "@repo/design-system";
 
 /** The line under an account: its last balance, or what kind of thing it is. */
@@ -25,7 +25,7 @@ function describe(account: FoundAccount): string {
 
 export default function AccountsScreen() {
   const { back } = useOnboardingStep("accounts", "permissions");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
   const [found, setFound] = useState<FoundAccount[] | null>(null);
   const [adding, setAdding] = useState(false);
@@ -57,7 +57,7 @@ export default function AccountsScreen() {
     const label = draft.trim();
     if (!label) return;
     update({
-      accounts: { ...choices, added: [...choices.added, { id: Crypto.randomUUID(), label }] },
+      accounts: { ...choices, added: [...choices.added, { id: randomUUID(), label }] },
     });
     setDraft("");
     setAdding(false);
@@ -65,7 +65,7 @@ export default function AccountsScreen() {
 
   function next() {
     update({ accounts: choices });
-    router.push("/import");
+    navigation.push("import");
   }
 
   return (

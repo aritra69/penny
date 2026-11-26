@@ -1,11 +1,11 @@
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, View } from "react-native";
 
 import { OnboardingScreen } from "@/components/onboarding/onboarding-screen";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/client";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, CheckboxBox, Text } from "@repo/design-system";
 
 function Point({ children }: { children: React.ReactNode }) {
@@ -19,7 +19,7 @@ function Point({ children }: { children: React.ReactNode }) {
 
 export default function PrivacyScreen() {
   useOnboardingStep("privacy");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
   const [agreed, setAgreed] = useState(!!state.privacyAgreedAt);
   const [leaving, setLeaving] = useState(false);
@@ -32,7 +32,7 @@ export default function PrivacyScreen() {
 
   function agree() {
     update({ privacyAgreedAt: state.privacyAgreedAt ?? new Date().toISOString() });
-    router.push("/gender");
+    navigation.push("gender");
   }
 
   return (

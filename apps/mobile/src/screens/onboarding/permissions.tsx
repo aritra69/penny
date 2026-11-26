@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -12,6 +11,7 @@ import { device, type DevicePermissions } from "@/lib/device";
 import { stepCounter } from "@/lib/onboarding/state";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, StatusRow, Text } from "@repo/design-system";
 
 function UnlockStep({
@@ -35,7 +35,7 @@ function UnlockStep({
 
 export default function PermissionsScreen() {
   const { back } = useOnboardingStep("permissions", "apps");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state } = useOnboarding();
   const [permissions, setPermissions] = useState<DevicePermissions | null>(null);
   const [busy, setBusy] = useState(false);
@@ -72,7 +72,7 @@ export default function PermissionsScreen() {
           size="lg"
           disabled={!permissions}
           // The "SMS allowed" screen is only for when it is.
-          onPress={() => router.push(smsAllowed ? "/sms-ok" : "/accounts")}
+          onPress={() => navigation.push(smsAllowed ? "sms-ok" : "accounts")}
         >
           <Text>Next</Text>
         </Button>

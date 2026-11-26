@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
@@ -8,6 +7,7 @@ import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
 import { requestPayment } from "@/lib/payments";
 import { PLAN_PRICES } from "@/lib/plans";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, ChoiceCard, ChoiceGroup, colors, formatMoney, Text } from "@repo/design-system";
 
 const price = (plan: Plan) => {
@@ -31,7 +31,7 @@ const PLANS: { value: Plan; title: string; description: string }[] = [
 
 export default function PlanScreen() {
   const { back } = useOnboardingStep("plan", "gender");
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export default function PlanScreen() {
       }
       update({ paidPlan: plan });
     }
-    router.push("/steps");
+    navigation.push("steps");
   }
 
   const action = !plan

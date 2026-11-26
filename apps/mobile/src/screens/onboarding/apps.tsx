@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 
@@ -7,13 +6,14 @@ import { device, type DetectedApp } from "@/lib/device";
 import { stepCounter, toggleId } from "@/lib/onboarding/state";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
+import { useAppNavigation } from "@/src/navigation/types";
 import { Button, SelectRow, Text } from "@repo/design-system";
 
 /** Bank SMS is a source like the apps, but it isn't an app, so it has its own id. */
 const SMS_SOURCE = "sms";
 
 export default function AppsScreen() {
-  const router = useRouter();
+  const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
   // Subscribers come straight from the setup steps; there is no key screen behind them.
   const { back } = useOnboardingStep("apps", state.plan === "own-key" ? "key-ok" : "steps");
@@ -39,7 +39,7 @@ export default function AppsScreen() {
 
   function next() {
     update({ sources: picked });
-    router.push("/permissions");
+    navigation.push("permissions");
   }
 
   return (
