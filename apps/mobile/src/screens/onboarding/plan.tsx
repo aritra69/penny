@@ -95,8 +95,12 @@ export default function PlanScreen() {
         </View>
       }
     >
-      {/* TODO: the paywall's hero picture from the design canvas, once it is in assets. */}
-      <IllustrationSlot height={170} className="mt-1" />
+      <IllustrationSlot
+        source={require("@/assets/illustrations/hero-free-month.png")}
+        inked={false}
+        height={170}
+        className="mt-1"
+      />
 
       <View className="gap-2.5 px-gutter pt-4">
         <Text
