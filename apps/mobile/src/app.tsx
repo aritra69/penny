@@ -5,6 +5,7 @@ import { StatusBar, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { authClient } from "@/lib/auth/client";
+import { useCapture } from "@/lib/capture/use-capture";
 import { OnboardingProvider, useOnboarding } from "@/lib/onboarding/store";
 import { RootNavigator } from "@/src/navigation/root-navigator";
 import { colors, Wordmark } from "@repo/design-system";
@@ -39,6 +40,7 @@ export default function App() {
       <OnboardingProvider userId={session?.user.id ?? null}>
         {/* The last session is cached in the Keychain, so this is brief after the first sign-in. */}
         <Root loading={isPending} signedIn={!!session} />
+        {isPending ? null : <CaptureSources userId={session?.user.id ?? null} />}
         <PortalHost />
       </OnboardingProvider>
     </SafeAreaProvider>
@@ -64,6 +66,12 @@ function Root({ loading, signedIn }: { loading: boolean; signedIn: boolean }) {
       <StatusBar barStyle="dark-content" />
     </NavigationContainer>
   );
+}
+
+/** Tells the phone which alerts to read for this account, and sends the ones it has queued. */
+function CaptureSources({ userId }: { userId: string | null }) {
+  useCapture(userId);
+  return null;
 }
 
 /** Paper with the wordmark. Fonts ship with the app, so it can be drawn straight away. */

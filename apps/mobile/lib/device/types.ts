@@ -3,8 +3,9 @@
  * installed, Android's notification / SMS / battery permissions, the accounts seen in bank SMS,
  * and reading SMS history.
  *
- * Nothing native implements this yet. `fake.ts` returns the design's sample data so the screens
- * work end to end; a real native module replaces it in `index.ts` without touching the screens.
+ * `android.ts` implements app detection and the permissions with Penny's native module. `fake.ts`
+ * covers the rest (accounts, history import, budgets) with the design's sample data, so the
+ * screens work end to end.
  */
 
 /** An integer in minor units (paise, cents) with its ISO 4217 currency. Negative = money out. */

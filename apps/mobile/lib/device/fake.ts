@@ -6,27 +6,25 @@ import type {
   ImportProgress,
   PennyDevice,
 } from "@/lib/device/types";
+import { matchInstalled } from "@/lib/finance-apps/catalogue";
 
 /**
- * STUB. Stands in for the native module that doesn't exist yet. It reads nothing from the phone
- * and asks Android for nothing: every value below is sample data from the design canvas.
+ * STUB. Stands in for the parts of the native module that don't exist yet, and for all of it on
+ * iOS. It reads nothing from the phone and asks Android for nothing: every value below is sample
+ * data from the design canvas.
  */
 
 const rupees = (amount: number) => amount * 100;
 
-const APPS: DetectedApp[] = [
-  { id: "com.snapwork.hdfc", name: "HDFC Bank", note: "Bank", suggested: true },
-  { id: "com.sbi.lotusintouch", name: "YONO SBI", note: "Bank", suggested: true },
-  {
-    id: "com.google.android.apps.nbu.paisa.user",
-    name: "Google Pay",
-    note: "UPI",
-    suggested: true,
-  },
-  { id: "com.phonepe.app", name: "PhonePe", note: "UPI", suggested: true },
-  { id: "com.nextbillion.groww", name: "Groww", note: "Investments", suggested: true },
-  { id: "com.dreamplug.androidapp", name: "CRED", note: "Mostly offers", suggested: false },
-];
+/** The six apps on the design's "Which apps can Penny read?" screen. */
+const APPS: DetectedApp[] = matchInstalled([
+  "com.hdfcbank.android.now",
+  "com.sbi.lotusintouch",
+  "com.google.android.apps.nbu.paisa.user",
+  "com.phonepe.app",
+  "com.nextbillion.groww",
+  "com.dreamplug.androidapp",
+]);
 
 const ACCOUNTS: FoundAccount[] = [
   {
