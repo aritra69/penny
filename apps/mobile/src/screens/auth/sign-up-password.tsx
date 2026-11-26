@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { SignUpStep } from "@/components/auth/sign-up-step";
+import { AuthStep } from "@/components/auth/auth-step";
 import { authClient } from "@/lib/auth/client";
 import { checkNewPassword, MIN_PASSWORD_LENGTH } from "@/lib/auth-validation";
 import type { RootStackParamList } from "@/src/navigation/types";
@@ -21,8 +21,9 @@ export default function SignUpPasswordScreen({ route }: Props) {
   }
 
   return (
-    <SignUpStep
+    <AuthStep
       step={3}
+      steps={3}
       title="Create a password"
       line={`At least ${MIN_PASSWORD_LENGTH} characters.`}
       field={{

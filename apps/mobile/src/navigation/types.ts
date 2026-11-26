@@ -6,6 +6,9 @@ import type { OnboardingStep } from "@/lib/onboarding/state";
 /** Every screen in the app. Onboarding screens are named after their step (`key`, `apps`, …). */
 export type RootStackParamList = {
   "sign-in": undefined;
+  // Logging in with email, one field per screen.
+  "log-in-email": undefined;
+  "log-in-password": { email: string };
   "sign-up": undefined;
   // Creating an account with email, one field per screen; each step carries what's been typed.
   "sign-up-name": undefined;
