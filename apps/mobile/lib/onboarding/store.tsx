@@ -1,4 +1,3 @@
-import * as SecureStore from "expo-secure-store";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import {
@@ -6,10 +5,11 @@ import {
   parseOnboardingState,
   type OnboardingState,
 } from "@/lib/onboarding/state";
+import * as SecureStorage from "@/lib/secure-storage";
 
 /**
  * Where onboarding progress is kept. One small JSON value per account, on this phone only.
- * SecureStore is used because it is already here; move this to the account on the server once
+ * Secure storage is used because it is already here; move this to the account on the server once
  * Penny has one.
  */
 const storageKey = (userId: string) => `penny.onboarding.${userId.replace(/[^\w.-]/g, "_")}`;
@@ -49,7 +49,7 @@ export function OnboardingProvider({
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
-    SecureStore.getItemAsync(storageKey(userId))
+    SecureStorage.getItem(storageKey(userId))
       .catch(() => null)
       .then((raw) => {
         if (!cancelled) setLoaded({ userId, state: parseOnboardingState(raw), dirty: false });
@@ -62,9 +62,7 @@ export function OnboardingProvider({
   // Save every change. A failed write only costs the user their place in setup.
   useEffect(() => {
     if (!loaded.userId || !loaded.dirty) return;
-    SecureStore.setItemAsync(storageKey(loaded.userId), JSON.stringify(loaded.state)).catch(
-      () => {},
-    );
+    SecureStorage.setItem(storageKey(loaded.userId), JSON.stringify(loaded.state)).catch(() => {});
   }, [loaded]);
 
   const change = useCallback((next: (state: OnboardingState) => OnboardingState) => {
