@@ -33,6 +33,8 @@ export function usePlanActions() {
       const patch: Partial<OnboardingState> = { plan, paidPlan: plan };
       // Starting Penny Plus starts the free month. Switching to the own key later keeps its dates:
       // the month already given runs to its end.
+      // TODO(play-billing): on that switch the server must also cancel the Play subscription
+      // (Google Play Developer API), so Plus never charges; and cancel the day-28 reminder.
       if (plan === "subscription" && !state.trialEndsAt) {
         const trial = trialDates(new Date());
         patch.trialStartedAt = trial.startedAt;
