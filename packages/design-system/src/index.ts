@@ -52,6 +52,7 @@ export { NoticeBar } from "./components/notice-bar";
 export { InfoNote } from "./components/info-note";
 export { ProgressBar } from "./components/progress-bar";
 export { StatusRow } from "./components/status-row";
+export { Mark } from "./components/mark";
 
 // Data display
 export { Amount, HiddenAmountsProvider, useAmountsHidden } from "./components/amount";
@@ -62,6 +63,7 @@ export { ListRow } from "./components/list-row";
 export { KeyValueRow, SplitStat } from "./components/key-value-row";
 export { BudgetRow } from "./components/budget-row";
 export { StepList } from "./components/step-list";
+export { Timeline } from "./components/timeline";
 export { PaceChart } from "./components/pace-chart";
 
 // Ask Penny and review

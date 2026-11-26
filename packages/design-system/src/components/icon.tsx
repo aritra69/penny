@@ -199,6 +199,16 @@ const ICONS = {
       </>
     ),
   },
+  card: {
+    weight: 1.5,
+    draw: () => (
+      <>
+        <Rect x={3.5} y={6} width={17} height={12.5} />
+        <Path d="M3.5 10h17M7 15h4" />
+      </>
+    ),
+  },
+  external: { weight: 1.5, draw: () => <Path d="M7 17L17 7M9 7h8v8" /> },
   "bar-chart": { weight: 1.5, draw: () => <Path d="M4 20V10M10 20V4M16 20v-8M3 20h18" /> },
   "arrow-down-circle": {
     weight: 1.5,
