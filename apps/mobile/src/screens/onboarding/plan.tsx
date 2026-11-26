@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
 import { IllustrationSlot, OnboardingScreen } from "@/components/onboarding/onboarding-screen";
@@ -7,17 +7,23 @@ import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
 import { usePlanActions } from "@/lib/plan-actions";
 import { dailyPrice, planPrice } from "@/lib/plans";
-import {
-  formatDay,
-  REMINDER_DAYS_BEFORE_END,
-  reminderDate,
-  TRIAL_DAYS,
-  trialDates,
-} from "@/lib/trial";
+import { formatDay, reminderDate, trialDates } from "@/lib/trial";
 import { useAppNavigation } from "@/src/navigation/types";
-import { Button, cn, colors, Icon, Text, Timeline } from "@repo/design-system";
+import { Button, cn, colors, Icon, Text } from "@repo/design-system";
 
 const HEADLINE = "font-display text-[32px] leading-[37px] tracking-[-0.6px]";
+
+/** What the month buys, in as few words as possible. */
+const VALUE = [
+  "Every payment sorted for you",
+  "Bills caught before they're due",
+  "Budgets that keep themselves",
+];
+
+/** The design's picture height; a shorter screen gives it only the room the rest leaves. */
+const HERO_HEIGHT = 220;
+/** Below this the picture would be a sliver, so it's left out. */
+const HERO_MIN_HEIGHT = 96;
 
 /**
  * Step 1: the free-month paywall. Penny Plus is a free month, then ₹149 a month through Google
@@ -38,6 +44,9 @@ export default function PlanScreen() {
     [state.trialStartedAt, state.trialEndsAt],
   );
   const price = planPrice("subscription");
+  // The room left above the headline; the picture fits itself into it so nothing scrolls.
+  const [heroSpace, setHeroSpace] = useState(0);
+  const heroHeight = Math.min(HERO_HEIGHT, heroSpace);
 
   async function start() {
     if (await buy("subscription")) navigation.push("plan-started");
@@ -67,20 +76,21 @@ export default function PlanScreen() {
               {error}
             </Text>
           ) : null}
-          <Text className="text-center font-sans-semibold text-label">
-            {TRIAL_DAYS} days free, then {price}
+          <Text className="text-center text-label">
+            <Text className="font-sans-bold text-label">₹0 today</Text>, then {price} ·{" "}
+            {dailyPrice()}
           </Text>
           <Button size="lg" className="min-h-[58px]" disabled={busy} onPress={start}>
             {busy ? <ActivityIndicator size="small" color={colors.paper} /> : null}
             <Text className="text-headline">Start my free month</Text>
           </Button>
           <View className="flex-row items-center justify-center gap-2">
-            <Icon name="check" size={16} />
+            <Icon name="bell" size={16} />
             <Text className="font-sans-semibold text-caption">
-              No charge today · Cancel in Google Play
+              Reminder on {formatDay(reminderDate(trial.endsAt))} · Cancel in Google Play
             </Text>
           </View>
-          <View className="mt-1.5 flex-row justify-between">
+          <View className="flex-row justify-between">
             <Button variant="link" size="sm" className="px-0" disabled={busy} onPress={ownKey}>
               <Text>Use my own key instead</Text>
             </Button>
@@ -97,51 +107,34 @@ export default function PlanScreen() {
         </View>
       }
     >
-      <IllustrationSlot
-        source={require("@/assets/illustrations/hero-free-month.png")}
-        inked={false}
-        height={170}
-        className="mt-1"
-      />
+      <View
+        className="flex-1 justify-center pt-1"
+        onLayout={(event) => setHeroSpace(Math.round(event.nativeEvent.layout.height) - 4)}
+      >
+        {heroHeight >= HERO_MIN_HEIGHT ? (
+          <IllustrationSlot
+            source={require("@/assets/illustrations/hero-free-month.png")}
+            inked={false}
+            height={heroHeight}
+          />
+        ) : null}
+      </View>
 
-      <View className="gap-2.5 px-gutter pt-4">
+      <View className="gap-5 px-gutter pt-4">
         <Text role="heading" aria-level={1} className={HEADLINE}>
           Try Penny free for a{" "}
           {/* Nested Text gets Text's own base size, so it repeats the headline's. */}
           <Text className={cn(HEADLINE, "bg-highlight")}>whole month</Text>
         </Text>
-        <Text>
-          Every feature, no limits. Then {price}, {dailyPrice()}.
-        </Text>
+        <View role="list" aria-label="What you get" className="gap-3">
+          {VALUE.map((line) => (
+            <View key={line} role="listitem" className="flex-row items-center gap-3">
+              <Icon name="check" size={20} />
+              <Text className="font-sans-semibold text-body-lg">{line}</Text>
+            </View>
+          ))}
+        </View>
       </View>
-
-      <Timeline
-        label="How your free month works"
-        className="mx-gutter mt-8"
-        items={[
-          {
-            when: `Today · ${formatDay(trial.startedAt)}`,
-            title: "Everything unlocks",
-            description: "Penny starts sorting your bank and UPI messages right away.",
-            icon: "lock",
-            tone: "done",
-          },
-          {
-            when: `Day ${TRIAL_DAYS - REMINDER_DAYS_BEFORE_END} · ${formatDay(reminderDate(trial.endsAt))}`,
-            title: "We remind you",
-            description: "A notification two days before your free month ends. No surprises.",
-            icon: "bell",
-            tone: "next",
-          },
-          {
-            when: `Day ${TRIAL_DAYS} · ${formatDay(trial.endsAt)}`,
-            title: `${price} starts`,
-            description: "Cancel any time before and you pay nothing.",
-            icon: "card",
-            tone: "later",
-          },
-        ]}
-      />
     </OnboardingScreen>
   );
 }
