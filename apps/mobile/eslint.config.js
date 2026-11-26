@@ -1,12 +1,19 @@
-// https://docs.expo.dev/guides/using-eslint/
 const { defineConfig } = require("eslint/config");
-const expoConfig = require("eslint-config-expo/flat");
+const reactNativeConfig = require("@react-native/eslint-config/flat");
 const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
 
 module.exports = defineConfig([
-  expoConfig,
+  // Without the Flow block: Penny has no Flow, and eslint-plugin-ft-flow crashes on ESLint 9.
+  reactNativeConfig.filter((config) => !config.plugins?.["ft-flow"]),
   eslintPluginPrettierRecommended,
   {
-    ignores: ["dist/*", ".expo/*"],
+    rules: {
+      // Styles here are NativeWind classes; inline `style` is kept for values computed at runtime
+      // (safe-area insets, measured sizes), which a StyleSheet can't hold.
+      "react-native/no-inline-styles": "off",
+    },
+  },
+  {
+    ignores: ["android/*", "ios/*", "vendor/*"],
   },
 ]);

@@ -1,10 +1,14 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "@react-native/typescript-config",
   "compilerOptions": {
     "strict": true,
+    "jsx": "react-jsx",
+    "types": [],
+    "lib": ["DOM", "ESNext"],
     "paths": {
       "@/*": ["./*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts", "env.d.ts"],
+  "exclude": ["**/node_modules", "**/Pods", "android", "ios"]
 }

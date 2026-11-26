@@ -10,6 +10,6 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["**/*.test.{ts,tsx}"],
-    exclude: ["node_modules/**", ".expo/**", "dist/**"],
+    exclude: ["node_modules/**", "android/**", "ios/**"],
   },
 });
