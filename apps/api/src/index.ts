@@ -33,7 +33,6 @@ const db = await openDb(databaseUrl).catch((cause) => {
 const auth = createAuth(db, {
   baseURL: env.BETTER_AUTH_URL ?? DEFAULT_AUTH_URL,
   secret: env.BETTER_AUTH_SECRET,
-  dev: env.NODE_ENV !== "production",
   google,
   infraApiKey: env.BETTER_AUTH_API_KEY,
 });

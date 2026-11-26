@@ -284,3 +284,20 @@ describe("waitlist", () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe("mobile app origin", () => {
+  // Better Auth checks the origin of requests that carry a session cookie, so a signed-in app's
+  // requests fail without `Origin: penny://` (apps/mobile/lib/auth/native-client.ts sends it).
+  const signOut = async (origin: string) => {
+    const cookie = await signUp(`${crypto.randomUUID()}@example.com`);
+    return send("/api/auth/sign-out", { method: "POST", headers: { origin, cookie }, body: "{}" });
+  };
+
+  test("accepts the app's penny:// origin", async () => {
+    expect((await signOut("penny://")).status).toBe(200);
+  });
+
+  test("rejects an origin it doesn't trust", async () => {
+    expect((await signOut("https://evil.example")).status).toBe(403);
+  });
+});
