@@ -16,7 +16,8 @@ export const extractionSchema = z.object({
   counterparty: z.string().nullable(),
   accountLast4: z.string().nullable(),
   reference: z.string().nullable(),
-  occurredAt: z.string().nullable(),
+  date: z.string().nullable(),
+  time: z.string().nullable(),
   confidence: z.number().min(0).max(1),
   reason: z.string(),
 });
