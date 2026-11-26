@@ -37,7 +37,7 @@ export default function YourPlanScreen() {
     ? "No plan yet. Restore a purchase made on this Google account."
     : onPlus
       ? trialEndsAt
-        ? `Free until ${formatFullDate(trialEndsAt)}, then ${plusPrice}`
+        ? `Free until ${formatDay(trialEndsAt)}, then ${plusPrice}`
         : `${plusPrice}, billed by Google Play`
       : trialEndsAt
         ? `Paid once. Free month until ${formatFullDate(trialEndsAt)}, then your key.`
@@ -46,8 +46,8 @@ export default function YourPlanScreen() {
   const reminder =
     onPlus && trialEndsAt
       ? [
-          `We'll remind you on ${formatDay(reminderDate(trialEndsAt))}`,
-          stats ? `${stats.sorted} messages sorted so far` : null,
+          `Reminder on ${formatDay(reminderDate(trialEndsAt))}`,
+          stats ? `${stats.sorted} messages sorted` : null,
         ]
           .filter(Boolean)
           .join(" · ")
@@ -55,7 +55,7 @@ export default function YourPlanScreen() {
 
   const footnote = onPlus
     ? trialEndsAt
-      ? `Cancel before ${formatDay(trialEndsAt)} and pay nothing. Your history stays stored encrypted.`
+      ? `Cancel before ${formatDay(trialEndsAt)} and pay nothing.`
       : "Cancel any time in Google Play. Your history stays stored encrypted."
     : "Your history stays stored encrypted.";
 
@@ -94,7 +94,7 @@ export default function YourPlanScreen() {
             </View>
             <Text className="text-label">
               {trialEndsAt
-                ? `Keep your free month until ${formatDay(trialEndsAt)}, then never pay for Plus.`
+                ? "Keep your free month, then never pay for Plus."
                 : "Plus stops charging you."}
             </Text>
             <Button

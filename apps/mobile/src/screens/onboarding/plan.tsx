@@ -20,8 +20,10 @@ const VALUE = [
   "Budgets that keep themselves",
 ];
 
-/** The design's picture height; a shorter screen gives it only the room the rest leaves. */
-const HERO_HEIGHT = 220;
+/** The picture is cropped to its drawing (no sky), so it is wider than the 3:2 heroes. */
+const HERO_ASPECT = 1086 / 462;
+/** About its height at full width; a shorter screen gives it only the room the rest leaves. */
+const HERO_HEIGHT = 150;
 /** Below this the picture would be a sliver, so it's left out. */
 const HERO_MIN_HEIGHT = 96;
 
@@ -115,6 +117,7 @@ export default function PlanScreen() {
           <IllustrationSlot
             source={require("@/assets/illustrations/hero-free-month.png")}
             inked={false}
+            aspectRatio={HERO_ASPECT}
             height={heroHeight}
           />
         ) : null}
