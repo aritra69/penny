@@ -6,13 +6,13 @@ Open-source personal finance app (working name). Android-first React Native app,
 
 ## Layout
 
-| Path                                                   | What                                                 | Stack                                                                                                                               |
-| ------------------------------------------------------ | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/mobile`                                          | The app                                              | React Native 0.88 (React Native CLI, no Expo), React Navigation, NativeWind 4 (Tailwind v3), React Native Reusables (shadcn for RN) |
-| `apps/api`                                             | Auth + CRUD backend (`/api/auth/*`, `/transactions`) | Bun.serve routes, Drizzle ORM, Postgres (Docker in development), AES-256-GCM field encryption                                       |
-| `apps/web`, `apps/docs`                                | Web apps (still the create-turbo starters)           | Next.js 16                                                                                                                          |
-| `packages/design-system`                               | Penny's design system: tokens, components, motion    | React Native, NativeWind preset, Moti (Framer Motion's API on Reanimated), react-native-svg                                         |
-| `packages/eslint-config`, `packages/typescript-config` | Shared configs for web/docs/api                      | —                                                                                                                                   |
+| Path                                                   | What                                                                         | Stack                                                                                                                               |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/mobile`                                          | The app                                                                      | React Native 0.88 (React Native CLI, no Expo), React Navigation, NativeWind 4 (Tailwind v3), React Native Reusables (shadcn for RN) |
+| `apps/api`                                             | Auth, CRUD and message capture (`/api/auth/*`, `/transactions`, `/captures`) | Bun.serve routes, Drizzle ORM, Postgres (Docker in development), AES-256-GCM field encryption                                       |
+| `apps/web`, `apps/docs`                                | Web apps (still the create-turbo starters)                                   | Next.js 16                                                                                                                          |
+| `packages/design-system`                               | Penny's design system: tokens, components, motion                            | React Native, NativeWind preset, Moti (Framer Motion's API on Reanimated), react-native-svg                                         |
+| `packages/eslint-config`, `packages/typescript-config` | Shared configs for web/docs/api                                              | —                                                                                                                                   |
 
 Before working in `apps/mobile`, read `apps/mobile/AGENTS.md` (commands, the checked-in `android/`/`ios/` projects, navigation, env).
 
@@ -94,4 +94,5 @@ One `.env` at the repo root (copy `.env.example`, gitignored) holds every app's 
 - The app is read-only over the user's money: it never moves money or initiates payments.
 - Financial data is stored on Penny's server, in Postgres. Amounts, merchants, categories and notes are encrypted by `apps/api/src/vault.ts` before they are written; new tables with financial data do the same. The server holds the key (`DATA_ENCRYPTION_KEY`), so copy says "stored encrypted", never "stays on your phone" or "Penny can't read it".
 - Bank OTPs are dropped on-device and never stored or sent anywhere.
-- AI features may draft entries, but the user always confirms before anything is saved.
+- Bank and payment-app messages that Penny is sure about are saved on their own; anything it isn't sure about goes to the Review inbox for the user to answer.
+- Entries the user starts through AI (Ask Penny, a shared screenshot, a goal from a sentence) are drafts until the user confirms them.

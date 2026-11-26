@@ -1,4 +1,4 @@
-import { createCipheriv, createDecipheriv, hkdfSync, randomBytes } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHmac, hkdfSync, randomBytes } from "node:crypto";
 
 /**
  * Encrypts the money fields before they reach the database, so a copy of the database alone
@@ -18,6 +18,11 @@ export type Vault = {
   seal(userId: string, value: string): string;
   /** Throws if the value was changed, belongs to another user, or was sealed with another key. */
   open(userId: string, sealed: string): string;
+  /**
+   * A keyed hash of `value` for this user: the same input always gives the same output, so it can
+   * be looked up, but it can't be reversed without the master key or matched across users.
+   */
+  fingerprint(userId: string, value: string): string;
 };
 
 /** `masterKey`: at least 32 random bytes, base64 (`openssl rand -base64 32`). */
@@ -28,14 +33,16 @@ export function createVault(masterKey: string): Vault {
   }
 
   const keys = new Map<string, Buffer>();
-  const keyFor = (userId: string) => {
-    let key = keys.get(userId);
+  const derive = (info: string, userId: string) => {
+    const cacheKey = `${info}:${userId}`;
+    let key = keys.get(cacheKey);
     if (!key) {
-      key = Buffer.from(hkdfSync("sha256", master, "penny-data", userId, 32));
-      keys.set(userId, key);
+      key = Buffer.from(hkdfSync("sha256", master, info, userId, 32));
+      keys.set(cacheKey, key);
     }
     return key;
   };
+  const keyFor = (userId: string) => derive("penny-data", userId);
 
   return {
     seal(userId, value) {
@@ -55,6 +62,12 @@ export function createVault(masterKey: string): Vault {
       decipher.setAuthTag(bytes.subarray(bytes.length - TAG_BYTES));
       const body = bytes.subarray(IV_BYTES, bytes.length - TAG_BYTES);
       return Buffer.concat([decipher.update(body), decipher.final()]).toString("utf8");
+    },
+
+    fingerprint(userId, value) {
+      return createHmac("sha256", derive("penny-fingerprint", userId))
+        .update(value)
+        .digest("base64url");
     },
   };
 }

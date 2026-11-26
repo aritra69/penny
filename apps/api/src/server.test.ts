@@ -183,6 +183,25 @@ describe("auth", () => {
   });
 });
 
+describe("captures", () => {
+  const sms = {
+    source: "sms",
+    sender: "AX-SBIINB",
+    text: "Rs.249.00 debited from A/c XX1234",
+    receivedAt: "2026-11-18T04:00:20Z",
+  };
+
+  test("need a session", async () => {
+    const res = await send("/captures", { method: "POST", body: JSON.stringify(sms) });
+    expect(res.status).toBe(401);
+  });
+
+  test("answer 503 when the server can't read messages", async () => {
+    const res = await call("/captures", { method: "POST", body: JSON.stringify(sms) });
+    expect(res.status).toBe(503);
+  });
+});
+
 describe("validation", () => {
   test("rejects missing and malformed fields", async () => {
     const res = await call("/transactions", {

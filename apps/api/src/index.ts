@@ -1,4 +1,5 @@
 import { createAuth } from "./auth.ts";
+import { createExtractor } from "./capture/index.ts";
 import { DEFAULT_AUTH_URL, DEFAULT_DATABASE_URL, DEFAULT_PORT } from "./constants/index.ts";
 import { openDb } from "./db.ts";
 import { startServer } from "./server.ts";
@@ -36,7 +37,10 @@ const auth = createAuth(db, {
   google,
   infraApiKey: env.BETTER_AUTH_API_KEY,
 });
-const server = startServer({ db, auth, vault, port: Number(env.PORT ?? DEFAULT_PORT) });
+// Reading bank messages needs OpenAI; @ai-sdk/openai reads OPENAI_API_KEY itself.
+const extract = env.OPENAI_API_KEY ? createExtractor() : undefined;
+const server = startServer({ db, auth, vault, port: Number(env.PORT ?? DEFAULT_PORT), extract });
 
 console.log(`Penny API listening on ${server.url}`);
 if (!google) console.log("Google sign-in is off: set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.");
+if (!extract) console.log("Reading bank messages is off: set OPENAI_API_KEY.");
