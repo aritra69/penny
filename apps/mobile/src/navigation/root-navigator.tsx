@@ -22,6 +22,8 @@ import KeyWorksScreen from "@/src/screens/onboarding/key-ok";
 import OpenAIKeyScreen from "@/src/screens/onboarding/key";
 import PermissionsScreen from "@/src/screens/onboarding/permissions";
 import PlanScreen from "@/src/screens/onboarding/plan";
+import PayOnceScreen from "@/src/screens/onboarding/plan-own-key";
+import FreeMonthStartedScreen from "@/src/screens/onboarding/plan-started";
 import PrivacyScreen from "@/src/screens/onboarding/privacy";
 import SmsAllowedScreen from "@/src/screens/onboarding/sms-ok";
 import SetupStepsScreen from "@/src/screens/onboarding/steps";
@@ -62,8 +64,10 @@ export function RootNavigator({ signedIn }: { signedIn: boolean }) {
         <Stack.Group key="onboarding">
           <Stack.Screen name="privacy" component={PrivacyScreen} />
           <Stack.Screen name="gender" component={GenderScreen} />
-          <Stack.Screen name="plan" component={PlanScreen} />
           <Stack.Screen name="steps" component={SetupStepsScreen} />
+          <Stack.Screen name="plan" component={PlanScreen} />
+          <Stack.Screen name="plan-started" component={FreeMonthStartedScreen} />
+          <Stack.Screen name="plan-own-key" component={PayOnceScreen} />
           <Stack.Screen name="key" component={OpenAIKeyScreen} />
           <Stack.Screen name="key-ok" component={KeyWorksScreen} />
           <Stack.Screen name="apps" component={AppsScreen} />

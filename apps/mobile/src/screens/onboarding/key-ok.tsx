@@ -27,7 +27,11 @@ export default function KeyWorksScreen() {
   return (
     <OnboardingScreen
       footer={
-        <Button size="lg" onPress={() => navigation.push("apps")}>
+        // From Settings (switching to the own key), the key is all that was missing: back to Home.
+        <Button
+          size="lg"
+          onPress={() => (state.completed ? navigation.popToTop() : navigation.push("apps"))}
+        >
           <Text>Next</Text>
         </Button>
       }

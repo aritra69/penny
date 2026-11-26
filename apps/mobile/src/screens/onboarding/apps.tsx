@@ -15,8 +15,9 @@ const SMS_SOURCE = "sms";
 export default function AppsScreen() {
   const navigation = useAppNavigation();
   const { state, update } = useOnboarding();
-  // Subscribers come straight from the setup steps; there is no key screen behind them.
-  const { back } = useOnboardingStep("apps", state.plan === "own-key" ? "key-ok" : "steps");
+  // Step 2 is where both branches of step 1 meet: back goes to "Key works" on the own-key path
+  // and to "Free month started" on the trial path.
+  const { back } = useOnboardingStep("apps", state.plan === "own-key" ? "key-ok" : "plan-started");
   const [apps, setApps] = useState<DetectedApp[] | null>(null);
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function AppsScreen() {
     <OnboardingScreen
       leading="back"
       onLeadingPress={back}
-      counter={stepCounter("apps", state.plan)}
+      counter={stepCounter("apps")}
       footer={
         <Button size="lg" disabled={!apps} onPress={next}>
           <Text>Next</Text>

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   initialOnboardingState,
-  numberedSteps,
+  NUMBERED_STEPS,
   parseOnboardingState,
   resumeStep,
   stepCounter,
@@ -16,25 +16,26 @@ const agreed: OnboardingState = {
 };
 
 describe("stepCounter", () => {
-  it("numbers the five setup steps on the own-key plan", () => {
-    expect(stepCounter("key", "own-key")).toBe("1 / 5");
-    expect(stepCounter("apps", "own-key")).toBe("2 / 5");
-    expect(stepCounter("permissions", "own-key")).toBe("3 / 5");
-    expect(stepCounter("accounts", "own-key")).toBe("4 / 5");
-    expect(stepCounter("import", "own-key")).toBe("5 / 5");
+  it("numbers the five setup steps, starting with the paywall", () => {
+    expect(NUMBERED_STEPS).toEqual(["plan", "apps", "permissions", "accounts", "import"]);
+    expect(stepCounter("plan")).toBe("1 / 5");
+    expect(stepCounter("apps")).toBe("2 / 5");
+    expect(stepCounter("permissions")).toBe("3 / 5");
+    expect(stepCounter("accounts")).toBe("4 / 5");
+    expect(stepCounter("import")).toBe("5 / 5");
   });
 
-  it("drops the key step on the subscription plan", () => {
-    expect(numberedSteps("subscription")).toEqual(["apps", "permissions", "accounts", "import"]);
-    expect(stepCounter("key", "subscription")).toBeUndefined();
-    expect(stepCounter("apps", "subscription")).toBe("1 / 4");
-    expect(stepCounter("import", "subscription")).toBe("4 / 4");
+  it("counts the own-key branch as step 1", () => {
+    expect(stepCounter("plan-own-key")).toBe("1 / 5");
+    expect(stepCounter("key")).toBe("1 / 5");
   });
 
   it("leaves the screens between them unnumbered", () => {
-    expect(stepCounter("privacy", "own-key")).toBeUndefined();
-    expect(stepCounter("key-ok", "own-key")).toBeUndefined();
-    expect(stepCounter("budgets", "subscription")).toBeUndefined();
+    expect(stepCounter("privacy")).toBeUndefined();
+    expect(stepCounter("steps")).toBeUndefined();
+    expect(stepCounter("plan-started")).toBeUndefined();
+    expect(stepCounter("key-ok")).toBeUndefined();
+    expect(stepCounter("budgets")).toBeUndefined();
   });
 });
 
@@ -59,8 +60,10 @@ describe("parseOnboardingState", () => {
       completed: false,
       privacyAgreedAt: "2026-11-19T10:00:00.000Z",
       gender: "female",
-      plan: "own-key",
-      paidPlan: "own-key",
+      plan: "subscription",
+      paidPlan: "subscription",
+      trialStartedAt: "2026-11-23T12:35:00.000Z",
+      trialEndsAt: "2026-12-23T12:35:00.000Z",
       keyCheck: { model: "gpt-test", latencyMs: 812 },
       sources: ["hdfc", "sms"],
       accounts: { mine: ["hdfc-1234"], added: [{ id: "a1", label: "ICICI ••4321" }] },
@@ -79,6 +82,8 @@ describe("parseOnboardingState", () => {
         privacyAgreedAt: "2026-11-19T10:00:00.000Z",
         gender: "other",
         plan: "free",
+        trialStartedAt: "2026-11-23T12:35:00.000Z",
+        trialEndsAt: "soon",
         keyCheck: { model: 3 },
         sources: ["hdfc", 4],
         accounts: { mine: ["x"], added: [{ id: "a" }, { id: "b", label: "B" }] },
@@ -91,6 +96,8 @@ describe("parseOnboardingState", () => {
     expect(parsed.privacyAgreedAt).toBe("2026-11-19T10:00:00.000Z");
     expect(parsed.gender).toBeNull();
     expect(parsed.plan).toBeNull();
+    expect(parsed.trialStartedAt).toBeNull();
+    expect(parsed.trialEndsAt).toBeNull();
     expect(parsed.keyCheck).toBeNull();
     expect(parsed.sources).toBeNull();
     expect(parsed.accounts).toEqual({ mine: ["x"], added: [{ id: "b", label: "B" }] });
@@ -106,25 +113,41 @@ describe("resumeStep", () => {
     ...agreed,
     plan: "subscription",
     paidPlan: "subscription",
+    trialStartedAt: "2026-11-23T12:35:00.000Z",
+    trialEndsAt: "2026-12-23T12:35:00.000Z",
   };
 
   it("returns to the saved step", () => {
-    expect(resumeStep({ ...ownKey, keyCheck, step: "accounts" })).toBe("accounts");
-    expect(resumeStep({ ...ownKey, keyCheck, step: "key-ok" })).toBe("key-ok");
-    expect(resumeStep({ ...ownKey, step: "steps" })).toBe("steps");
     expect(resumeStep({ ...agreed, step: "gender" })).toBe("gender");
+    expect(resumeStep({ ...agreed, step: "steps" })).toBe("steps");
     expect(resumeStep({ ...agreed, step: "plan" })).toBe("plan");
+    expect(resumeStep({ ...subscription, step: "plan-started" })).toBe("plan-started");
+    expect(resumeStep({ ...subscription, step: "accounts" })).toBe("accounts");
+    expect(resumeStep({ ...ownKey, step: "plan-own-key" })).toBe("plan-own-key");
+    expect(resumeStep({ ...ownKey, step: "key" })).toBe("key");
+    expect(resumeStep({ ...ownKey, keyCheck, step: "key-ok" })).toBe("key-ok");
+    expect(resumeStep({ ...ownKey, keyCheck, step: "accounts" })).toBe("accounts");
   });
 
   it("goes back to the promise until it is agreed", () => {
     expect(resumeStep({ ...initialOnboardingState, step: "apps" })).toBe("privacy");
   });
 
-  it("goes back to the plan until one is picked and paid for", () => {
-    expect(resumeStep({ ...agreed, step: "steps" })).toBe("plan");
+  it("goes back to the paywall until a plan is bought", () => {
+    expect(resumeStep({ ...agreed, step: "plan-started" })).toBe("plan");
+    expect(resumeStep({ ...agreed, step: "apps" })).toBe("plan");
     expect(resumeStep({ ...agreed, plan: "subscription", step: "apps" })).toBe("plan");
-    expect(resumeStep({ ...ownKey, plan: "subscription", step: "apps" })).toBe("plan");
     expect(resumeStep({ ...agreed, keyCheck, step: "import" })).toBe("plan");
+    expect(resumeStep({ ...agreed, step: "plan-own-key" })).toBe("plan");
+  });
+
+  it("keeps the own-key plan on the ₹999 screen until it is paid", () => {
+    const chosen: OnboardingState = { ...agreed, plan: "own-key" };
+    expect(resumeStep({ ...chosen, step: "plan-own-key" })).toBe("plan-own-key");
+    expect(resumeStep({ ...chosen, step: "key" })).toBe("plan-own-key");
+    expect(resumeStep({ ...chosen, keyCheck, step: "apps" })).toBe("plan-own-key");
+    // Bought Plus, then switched to the own key without paying for it.
+    expect(resumeStep({ ...subscription, plan: "own-key", step: "key" })).toBe("plan-own-key");
   });
 
   it("goes back to the key step when the own-key plan has no working key", () => {
@@ -132,10 +155,16 @@ describe("resumeStep", () => {
     expect(resumeStep({ ...ownKey, step: "import" })).toBe("key");
   });
 
-  it("needs no key on the subscription plan, and never reopens the key screens", () => {
-    expect(resumeStep({ ...subscription, step: "import" })).toBe("import");
-    expect(resumeStep({ ...subscription, step: "key" })).toBe("steps");
-    expect(resumeStep({ ...subscription, keyCheck, step: "key-ok" })).toBe("steps");
+  it("never reopens the other branch's screens", () => {
+    expect(resumeStep({ ...subscription, step: "plan-own-key" })).toBe("apps");
+    expect(resumeStep({ ...subscription, step: "key" })).toBe("apps");
+    expect(resumeStep({ ...subscription, keyCheck, step: "key-ok" })).toBe("apps");
+    expect(resumeStep({ ...ownKey, keyCheck, step: "plan-started" })).toBe("plan-own-key");
+  });
+
+  it("needs no key or trial dates on a restored Plus purchase", () => {
+    const restored: OnboardingState = { ...agreed, plan: "subscription", paidPlan: "subscription" };
+    expect(resumeStep({ ...restored, step: "import" })).toBe("import");
   });
 });
 

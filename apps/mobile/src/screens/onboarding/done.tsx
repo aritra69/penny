@@ -1,3 +1,5 @@
+import { View } from "react-native";
+
 import {
   IllustrationSlot,
   OnboardingScreen,
@@ -5,11 +7,15 @@ import {
 } from "@/components/onboarding/onboarding-screen";
 import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
-import { Button, Text } from "@repo/design-system";
+import { planPrice } from "@/lib/plans";
+import { formatDay, reminderDate } from "@/lib/trial";
+import { Button, Icon, Text } from "@repo/design-system";
 
 export default function AllSetScreen() {
   useOnboardingStep("done");
-  const { complete } = useOnboarding();
+  const { state, complete } = useOnboarding();
+  // The free-month note is for the trial path only (not the own key, not a restored purchase).
+  const trialEndsAt = state.plan === "subscription" ? state.trialEndsAt : null;
 
   return (
     <OnboardingScreen
@@ -29,6 +35,16 @@ export default function AllSetScreen() {
         New payments sort themselves as they arrive. Your budgets are ready to check, and you can
         change anything in Settings.
       </ResultIntro>
+      {trialEndsAt ? (
+        <View className="mx-gutter mt-7 flex-row items-start gap-3 border-1.5 border-foreground px-4 py-3.5">
+          <Icon name="bell" size={20} strokeWidth={1.75} />
+          <Text className="flex-1 text-label">
+            <Text className="font-sans-bold text-label">Free until {formatDay(trialEndsAt)}.</Text>{" "}
+            We&apos;ll remind you on {formatDay(reminderDate(trialEndsAt))}, two days before{" "}
+            {planPrice("subscription")} starts.
+          </Text>
+        </View>
+      ) : null}
     </OnboardingScreen>
   );
 }

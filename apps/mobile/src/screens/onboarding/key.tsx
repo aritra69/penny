@@ -14,9 +14,9 @@ import { Button, colors, Icon, Input, Text } from "@repo/design-system";
 const KEYS_URL = "https://platform.openai.com/api-keys";
 
 export default function OpenAIKeyScreen() {
-  const { back } = useOnboardingStep("key", "steps");
+  const { back } = useOnboardingStep("key", "plan-own-key");
   const navigation = useAppNavigation();
-  const { state, update } = useOnboarding();
+  const { update } = useOnboarding();
   // The key lives in this field until it is checked, then only in the Keychain.
   const [key, setKey] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export default function OpenAIKeyScreen() {
     <OnboardingScreen
       leading="back"
       onLeadingPress={back}
-      counter={stepCounter("key", state.plan)}
+      counter={stepCounter("key")}
       footer={
         <View className="gap-3.5">
           <View className="flex-row items-start gap-2.5">

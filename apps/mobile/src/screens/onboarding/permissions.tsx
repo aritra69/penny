@@ -9,7 +9,6 @@ import {
 } from "@/components/onboarding/phone-sketches";
 import { device, type DevicePermissions } from "@/lib/device";
 import { stepCounter } from "@/lib/onboarding/state";
-import { useOnboarding } from "@/lib/onboarding/store";
 import { useOnboardingStep } from "@/lib/onboarding/use-step";
 import { useAppNavigation } from "@/src/navigation/types";
 import { Button, StatusRow, Text } from "@repo/design-system";
@@ -36,7 +35,6 @@ function UnlockStep({
 export default function PermissionsScreen() {
   const { back } = useOnboardingStep("permissions", "apps");
   const navigation = useAppNavigation();
-  const { state } = useOnboarding();
   const [permissions, setPermissions] = useState<DevicePermissions | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -66,7 +64,7 @@ export default function PermissionsScreen() {
     <OnboardingScreen
       leading="back"
       onLeadingPress={back}
-      counter={stepCounter("permissions", state.plan)}
+      counter={stepCounter("permissions")}
       footer={
         <Button
           size="lg"
