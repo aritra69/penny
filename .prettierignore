@@ -6,7 +6,10 @@ skills-lock.json
 .husky/_/
 **/drizzle/meta/
 **/.next/
-**/.expo/
 **/dist/
 **/.turbo/
 .impeccable/
+
+# Native projects: Xcode, Gradle and react-native-asset write these files
+apps/mobile/android/
+apps/mobile/ios/

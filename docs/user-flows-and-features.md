@@ -224,7 +224,7 @@ Linked or implied by the design, but not drawn:
 | ------------------------ | ---------------------------------------------------------------------------------------------------------- |
 | Design system            | `packages/design-system`: tokens, components, motion, dev-only gallery in the app                          |
 | Auth (API)               | Better Auth with email and password and Google, at `/api/auth/*`                                           |
-| Auth (mobile)            | Sign-in and sign-up screens, session in SecureStore, `(auth)` and `(app)` route groups                     |
+| Auth (mobile)            | Sign-in and sign-up screens, native Google sign-in, session in the Keychain, signed-in/out screen groups   |
 | Transactions             | API CRUD at `/transactions`, stored in Postgres per user, money fields encrypted (`apps/api/src/vault.ts`) |
 | Everything in "Features" | Not started                                                                                                |
 
