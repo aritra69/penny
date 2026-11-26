@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ActivityIndicator, useWindowDimensions, View, type TextInputInstance } from "react-native";
+import { ActivityIndicator, View, type TextInputInstance } from "react-native";
 
 import { GoogleButton } from "@/components/auth/google-button";
 import { IllustrationSlot, OnboardingScreen } from "@/components/onboarding/onboarding-screen";
@@ -20,9 +20,10 @@ const HERO = {
   "sign-in": require("@/assets/illustrations/hero-login.png"),
   "sign-up": require("@/assets/illustrations/hero-signup.png"),
 };
-/** The design's height, and the most of a short screen it may take so the form stays in view. */
-const HERO_HEIGHT = 220;
-const HERO_MAX_SHARE = 0.26;
+/** The design's height. On a shorter screen the picture gets only the room the form leaves. */
+const HERO_HEIGHT = 240;
+/** Below this the picture would be a sliver, so it's left out. */
+const HERO_MIN_HEIGHT = 96;
 
 type WelcomeScreenProps = {
   /** "sign-in": log in to an account · "sign-up": create one. Same screen, one more field. */
@@ -41,8 +42,9 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
   const [showPassword, setShowPassword] = useState(false);
   const emailRef = useRef<TextInputInstance>(null);
   const passwordRef = useRef<TextInputInstance>(null);
-  const { height: screenHeight } = useWindowDimensions();
-  const heroHeight = Math.min(HERO_HEIGHT, Math.round(screenHeight * HERO_MAX_SHARE));
+  // The room above the headline once the form is laid out; the picture fits itself into it.
+  const [heroSpace, setHeroSpace] = useState(0);
+  const heroHeight = Math.min(HERO_HEIGHT, heroSpace);
 
   const set = (key: keyof SignUpFields) => (value: string) =>
     setFields((f) => ({ ...f, [key]: value }));
@@ -91,21 +93,35 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
             {submitting ? <ActivityIndicator size="small" color={colors.paper} /> : null}
             <Text>{signUp ? "Create account" : "Log in"}</Text>
           </Button>
+          <Button
+            variant="link"
+            size="sm"
+            className="self-center"
+            onPress={() => navigation.replace(signUp ? "sign-in" : "sign-up")}
+          >
+            <Text className="text-caption">
+              {signUp ? "Have an account? Log in" : "New here? Create account"}
+            </Text>
+          </Button>
         </>
       }
     >
-      <IllustrationSlot source={HERO[mode]} height={heroHeight} className="mt-5" />
-      <View className="gap-2.5 px-gutter pt-6">
-        <Text variant="title">Know where your money goes, without typing a thing.</Text>
-        <Text>
-          Penny reads your bank SMS and payment alerts and sorts them for you. Your data is stored
-          encrypted.
-        </Text>
+      {/* Takes whatever height the form doesn't need, so the whole screen fits without scrolling. */}
+      <View
+        className="flex-1 justify-end pt-4"
+        onLayout={(event) => setHeroSpace(Math.round(event.nativeEvent.layout.height) - 16)}
+      >
+        {heroHeight >= HERO_MIN_HEIGHT ? (
+          <IllustrationSlot source={HERO[mode]} height={heroHeight} />
+        ) : null}
       </View>
+      <Text variant="title" className="px-gutter pt-5">
+        Know where your money goes.
+      </Text>
 
-      <View className="gap-[22px] px-gutter pt-7">
+      <View className="gap-4 px-gutter pt-5">
         <GoogleButton disabled={submitting} onError={setFormError} />
-        <LabeledDivider label="or with email" />
+        <LabeledDivider label="or" />
         {signUp ? (
           <TextField
             label="Name"
@@ -161,30 +177,18 @@ export function WelcomeScreen({ mode }: WelcomeScreenProps) {
               onPress: () => setShowPassword((shown) => !shown),
             }}
           />
-          <View className="flex-row items-center justify-between pt-2">
+          {signUp ? null : (
             <Button
               variant="link"
               size="sm"
-              className="px-0"
-              onPress={() => navigation.replace(signUp ? "sign-in" : "sign-up")}
+              className="self-end px-0"
+              onPress={() => setNotice("Password reset isn't available on this server yet.")}
             >
-              <Text className="text-caption">
-                {signUp ? "Have an account? Log in" : "New here? Create account"}
-              </Text>
+              <Text className="text-caption">Forgot password?</Text>
             </Button>
-            {signUp ? null : (
-              <Button
-                variant="link"
-                size="sm"
-                className="px-0"
-                onPress={() => setNotice("Password reset isn't available on this server yet.")}
-              >
-                <Text className="text-caption">Forgot password?</Text>
-              </Button>
-            )}
-          </View>
+          )}
           {notice ? (
-            <Text role="alert" variant="caption" className="pt-1">
+            <Text role="alert" variant="caption">
               {notice}
             </Text>
           ) : null}
