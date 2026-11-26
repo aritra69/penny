@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { resumeStep } from "@/lib/onboarding/state";
 import { useOnboarding } from "@/lib/onboarding/store";
 import type { RootStackParamList, RouteName } from "@/src/navigation/types";
+import LogInEmailScreen from "@/src/screens/auth/log-in-email";
+import LogInPasswordScreen from "@/src/screens/auth/log-in-password";
 import SignInScreen from "@/src/screens/auth/sign-in";
 import SignUpScreen from "@/src/screens/auth/sign-up";
 import SignUpEmailScreen from "@/src/screens/auth/sign-up-email";
@@ -49,6 +51,8 @@ export function RootNavigator({ signedIn }: { signedIn: boolean }) {
       {!signedIn ? (
         <Stack.Group key="auth">
           <Stack.Screen name="sign-in" component={SignInScreen} />
+          <Stack.Screen name="log-in-email" component={LogInEmailScreen} />
+          <Stack.Screen name="log-in-password" component={LogInPasswordScreen} />
           <Stack.Screen name="sign-up" component={SignUpScreen} />
           <Stack.Screen name="sign-up-name" component={SignUpNameScreen} />
           <Stack.Screen name="sign-up-email" component={SignUpEmailScreen} />
