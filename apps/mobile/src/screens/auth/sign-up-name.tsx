@@ -1,12 +1,13 @@
-import { SignUpStep } from "@/components/auth/sign-up-step";
+import { AuthStep } from "@/components/auth/auth-step";
 import { checkName } from "@/lib/auth-validation";
 import { useAppNavigation } from "@/src/navigation/types";
 
 export default function SignUpNameScreen() {
   const navigation = useAppNavigation();
   return (
-    <SignUpStep
+    <AuthStep
       step={1}
+      steps={3}
       title="What should we call you?"
       field={{ label: "Name", autoComplete: "name", textContentType: "name" }}
       action="Next"

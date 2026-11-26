@@ -5,12 +5,10 @@ import { OnboardingScreen, StepIntro } from "@/components/onboarding/onboarding-
 import { useAppNavigation } from "@/src/navigation/types";
 import { Button, colors, Text, TextField } from "@repo/design-system";
 
-/** How many screens creating an account with email takes: name, email, password. */
-const STEPS = 3;
-
-type SignUpStepProps = {
-  /** 1-based, for the "1 / 3" counter. */
+type AuthStepProps = {
+  /** 1-based position and the flow's length, for the "1 / 3" counter. */
   step: number;
+  steps: number;
   title: string;
   /** One short line under the title. */
   line?: string;
@@ -21,10 +19,25 @@ type SignUpStepProps = {
   check: (value: string) => string | null;
   /** Runs with a checked value. Resolve to an error to show it, or nothing to move on. */
   onDone: (value: string) => Promise<string | null | void> | void;
+  /** A quiet extra under the field, e.g. "Forgot password?". Not a second main action. */
+  children?: React.ReactNode;
 };
 
-/** One screen of creating an account: a question, one field and one button. */
-export function SignUpStep({ step, title, line, field, action, check, onDone }: SignUpStepProps) {
+/**
+ * One screen of logging in or creating an account with email: a question, one field and one
+ * button, so each screen fits and asks for one thing.
+ */
+export function AuthStep({
+  step,
+  steps,
+  title,
+  line,
+  field,
+  action,
+  check,
+  onDone,
+  children,
+}: AuthStepProps) {
   const navigation = useAppNavigation();
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +74,7 @@ export function SignUpStep({ step, title, line, field, action, check, onDone }: 
     <OnboardingScreen
       leading="back"
       onLeadingPress={() => navigation.goBack()}
-      counter={`${step} / ${STEPS}`}
+      counter={`${step} / ${steps}`}
       footer={
         <Button size="lg" disabled={busy} onPress={submit}>
           {busy ? <ActivityIndicator size="small" color={colors.paper} /> : null}
@@ -90,11 +103,12 @@ export function SignUpStep({ step, title, line, field, action, check, onDone }: 
                 }
               : field.action
           }
-          returnKeyType={step === STEPS ? "go" : "next"}
+          returnKeyType={step === steps ? "go" : "next"}
           // Keep the keyboard up between steps, so the next field opens ready to type.
-          submitBehavior={step === STEPS ? "blurAndSubmit" : "submit"}
+          submitBehavior={step === steps ? "blurAndSubmit" : "submit"}
           onSubmitEditing={submit}
         />
+        {children}
       </View>
     </OnboardingScreen>
   );
