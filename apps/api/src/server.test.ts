@@ -37,6 +37,10 @@ async function signUp(email: string) {
     .join("; ");
 }
 
+// Booting PGlite, migrating and hashing two passwords outgrows bun's 5 s hook timeout on CI,
+// where it runs alongside the web builds.
+const SETUP_TIMEOUT_MS = 30_000;
+
 beforeAll(async () => {
   db = await openTestDb();
   const auth = createAuth(db, { baseURL: AUTH_URL, secret: "test-secret-".repeat(4) });
@@ -45,7 +49,7 @@ beforeAll(async () => {
   base = server.url.href.replace(/\/$/, "");
   alice = await signUp("alice@example.com");
   bob = await signUp("bob@example.com");
-});
+}, SETUP_TIMEOUT_MS);
 afterAll(() => server.stop(true));
 
 /** Calls the API as `cookie`'s user (Alice by default). */
