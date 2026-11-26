@@ -33,8 +33,13 @@ export default function FreeMonthStartedScreen() {
         </Button>
       }
     >
-      {/* TODO: the "free month started" picture from the design canvas, once it is in assets. */}
-      <IllustrationSlot height={200} className="mt-14" />
+      <IllustrationSlot
+        source={require("@/assets/illustrations/hero-trial-reminder.png")}
+        inked={false}
+        anchor="center"
+        height={200}
+        className="mt-14"
+      />
 
       <View className="gap-2.5 px-gutter pt-7">
         <Text variant="title" className="leading-[34px]">

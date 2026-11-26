@@ -87,21 +87,35 @@ export function ResultIntro({ title, children }: { title: string; children: Reac
 }
 
 /**
- * A picture from the design canvas, cropped to a band like the boards do. The art is black ink
+ * A picture from the design canvas, cropped to a band like the boards do. Most art is black ink
  * on a transparent background, so it is tinted with the ink token, the way icons are: it follows
- * the theme's ink rather than the system setting (Penny is light-only).
+ * the theme's ink rather than the system setting (Penny is light-only). Art with an accent
+ * colour is shown as drawn (`inked={false}`).
  * Without a `source` (pictures not in the app's assets yet) it holds the place in grey.
  */
 export function IllustrationSlot({
   source,
   aspectRatio = 3 / 2,
   height,
+  anchor = "bottom",
+  inked = true,
   className,
 }: {
   source?: ImageSourcePropType;
   /** Width over height of the picture. The hero scenes are 3:2. */
   aspectRatio?: number;
   height: number;
+  /**
+   * Where a picture taller than the slot is cropped from. "bottom" (the default) keeps the ground
+   * and crops the sky; "center" crops evenly, for pictures with something at the top edge.
+   */
+  anchor?: "bottom" | "center";
+  /**
+   * true (the default): black ink on a transparent background, tinted with the ink token.
+   * false: shown as drawn, for pictures with an accent colour (the highlighter yellow) on a white
+   * background, which matches the paper token.
+   */
+  inked?: boolean;
   className?: string;
 }) {
   if (!source) {
@@ -109,13 +123,19 @@ export function IllustrationSlot({
   }
   return (
     // Decorative: the headline under it says what the screen is for.
-    <View aria-hidden className={cn("mx-gutter overflow-hidden", className)} style={{ height }}>
+    <View
+      aria-hidden
+      className={cn("mx-gutter justify-center overflow-hidden", className)}
+      style={{ height }}
+    >
       <Image
         source={source}
-        tintColor={colors.ink}
-        // Full width, anchored to the bottom: any crop comes off the sky, not the ground.
+        tintColor={inked ? colors.ink : undefined}
         resizeMode="contain"
-        style={{ position: "absolute", bottom: 0, width: "100%", height: undefined, aspectRatio }}
+        style={[
+          { width: "100%", height: undefined, aspectRatio },
+          anchor === "bottom" ? { position: "absolute", bottom: 0 } : null,
+        ]}
       />
     </View>
   );
