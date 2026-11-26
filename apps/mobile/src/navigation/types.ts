@@ -16,6 +16,9 @@ export type RootStackParamList = {
   "sign-up-password": { name: string; email: string };
   home: undefined;
   "design-system": undefined;
+  // After setup: Settings › Your plan, and the day-28 "free month ending" screen.
+  "your-plan": undefined;
+  "trial-ending": undefined;
 } & { [Step in OnboardingStep]: undefined };
 
 export type RouteName = keyof RootStackParamList;

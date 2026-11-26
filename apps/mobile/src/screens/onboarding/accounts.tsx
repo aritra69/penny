@@ -72,7 +72,7 @@ export default function AccountsScreen() {
     <OnboardingScreen
       leading="back"
       onLeadingPress={back}
-      counter={stepCounter("accounts", state.plan)}
+      counter={stepCounter("accounts")}
       footer={
         <Button size="lg" disabled={!found} onPress={next}>
           <Text>Next</Text>

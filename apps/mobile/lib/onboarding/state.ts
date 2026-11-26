@@ -7,8 +7,11 @@
 export const ONBOARDING_STEPS = [
   "privacy",
   "gender",
-  "plan",
   "steps",
+  // Step 1: the free-month paywall, and the two ways on from it.
+  "plan",
+  "plan-started",
+  "plan-own-key",
   "key",
   "key-ok",
   "apps",
@@ -23,23 +26,30 @@ export const ONBOARDING_STEPS = [
 export type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
 
 /**
- * How the user pays. "subscription": Penny does the sorting, nothing to connect.
- * "own-key": the user connects their own OpenAI key and pays OpenAI directly.
+ * How the user pays. "subscription": Penny Plus, a free month then monthly; Penny does the
+ * sorting. "own-key": paid once; the user connects their own OpenAI key and pays OpenAI directly.
  */
 export type Plan = "subscription" | "own-key";
 
-const ALL_NUMBERED: OnboardingStep[] = ["key", "apps", "permissions", "accounts", "import"];
+/** The five numbered setup steps. Step 1 is the paywall, on either plan. */
+export const NUMBERED_STEPS: OnboardingStep[] = [
+  "plan",
+  "apps",
+  "permissions",
+  "accounts",
+  "import",
+];
 
-/** The numbered setup steps for a plan. Only the own-key plan has the key step. */
-export function numberedSteps(plan: Plan | null): OnboardingStep[] {
-  return plan === "subscription" ? ALL_NUMBERED.filter((step) => step !== "key") : ALL_NUMBERED;
-}
+/** Screens that are part of a numbered step and show its number: the own-key branch is step 1. */
+const PART_OF: Partial<Record<OnboardingStep, OnboardingStep>> = {
+  "plan-own-key": "plan",
+  key: "plan",
+};
 
 /** "2 / 5" on a numbered step, undefined on the screens between them. */
-export function stepCounter(step: OnboardingStep, plan: Plan | null): string | undefined {
-  const steps = numberedSteps(plan);
-  const index = steps.indexOf(step);
-  return index === -1 ? undefined : `${index + 1} / ${steps.length}`;
+export function stepCounter(step: OnboardingStep): string | undefined {
+  const index = NUMBERED_STEPS.indexOf(PART_OF[step] ?? step);
+  return index === -1 ? undefined : `${index + 1} / ${NUMBERED_STEPS.length}`;
 }
 
 /** What the test call to OpenAI found. The key itself lives in the Keychain, never here. */
@@ -67,8 +77,14 @@ export type OnboardingState = {
   /** Which of the two figures the user picked. null until they have. */
   gender: Gender | null;
   plan: Plan | null;
-  /** The plan the user has paid for. Setup goes past the plan screen only when it matches `plan`. */
+  /**
+   * The plan the user has bought (starting Penny Plus's free month counts) or restored. Setup
+   * goes past step 1 only when it matches `plan`.
+   */
   paidPlan: Plan | null;
+  /** ISO 8601 UTC start and end of the free month. null off the trial path (own key, restored). */
+  trialStartedAt: string | null;
+  trialEndsAt: string | null;
   keyCheck: KeyCheck | null;
   /** Ids of the apps (and "sms") Penny may read. null until the user has seen the list. */
   sources: string[] | null;
@@ -87,6 +103,8 @@ export const initialOnboardingState: OnboardingState = {
   gender: null,
   plan: null,
   paidPlan: null,
+  trialStartedAt: null,
+  trialEndsAt: null,
   keyCheck: null,
   sources: null,
   accounts: null,
@@ -110,6 +128,19 @@ function parseKeyCheck(value: unknown): KeyCheck | null {
   const { model, latencyMs } = value;
   if (typeof model !== "string" || typeof latencyMs !== "number") return null;
   return { model, latencyMs };
+}
+
+const isIsoDate = (value: unknown): value is string =>
+  typeof value === "string" && !Number.isNaN(Date.parse(value));
+
+/** Both dates or neither: half a trial can't be shown. */
+function parseTrial(
+  startedAt: unknown,
+  endsAt: unknown,
+): Pick<OnboardingState, "trialStartedAt" | "trialEndsAt"> {
+  return isIsoDate(startedAt) && isIsoDate(endsAt)
+    ? { trialStartedAt: startedAt, trialEndsAt: endsAt }
+    : { trialStartedAt: null, trialEndsAt: null };
 }
 
 function parseAccounts(value: unknown): AccountChoices | null {
@@ -155,6 +186,7 @@ export function parseOnboardingState(raw: string | null | undefined): Onboarding
     gender: data.gender === "female" || data.gender === "male" ? data.gender : null,
     plan: isPlan(data.plan) ? data.plan : null,
     paidPlan: isPlan(data.paidPlan) ? data.paidPlan : null,
+    ...parseTrial(data.trialStartedAt, data.trialEndsAt),
     keyCheck: parseKeyCheck(data.keyCheck),
     sources: isStringArray(data.sources) ? data.sources : null,
     accounts: parseAccounts(data.accounts),
@@ -168,20 +200,30 @@ export function parseOnboardingState(raw: string | null | undefined): Onboarding
 
 /**
  * Where to reopen setup. Normally the saved step, pulled back when what that screen relies on
- * isn't there: nothing past the promise without agreeing to it, nothing past the plan until
- * one is paid for, and on the own-key plan nothing past the key step without a working key.
+ * isn't there: nothing past the promise without agreeing to it, nothing past step 1 until a plan
+ * is bought, and on the own-key plan nothing past the key step without a working key.
+ *
+ * Step 1 branches: Penny Plus goes paywall → "Free month started" → apps; the own key goes
+ * paywall → "Pay ₹999 once" → key → "Key works" → apps. Screens of the other branch are never
+ * reopened.
  */
 export function resumeStep(state: OnboardingState): OnboardingStep {
   if (!state.privacyAgreedAt) return "privacy";
-  const index = ONBOARDING_STEPS.indexOf(state.step);
-  const after = (step: OnboardingStep) => index > ONBOARDING_STEPS.indexOf(step);
-  if ((!state.plan || state.paidPlan !== state.plan) && after("plan")) return "plan";
-  if (state.plan === "own-key" && !state.keyCheck && after("key")) return "key";
-  // The key screens don't exist on the subscription plan.
-  if (state.plan === "subscription" && (state.step === "key" || state.step === "key-ok")) {
-    return "steps";
+  const { plan, step } = state;
+  const index = ONBOARDING_STEPS.indexOf(step);
+  const after = (other: OnboardingStep) => index > ONBOARDING_STEPS.indexOf(other);
+  const paid = !!plan && state.paidPlan === plan;
+
+  if (!paid && after("plan")) {
+    // The ₹999 screen is where the own-key plan is paid for; everything else waits on the paywall.
+    return plan === "own-key" && step !== "plan-started" ? "plan-own-key" : "plan";
   }
-  return state.step;
+  if (plan === "subscription" && (step === "plan-own-key" || step === "key" || step === "key-ok")) {
+    return "apps";
+  }
+  if (plan === "own-key" && step === "plan-started") return "plan-own-key";
+  if (plan === "own-key" && !state.keyCheck && after("key")) return "key";
+  return step;
 }
 
 /** Adds or removes an id, keeping the order of first selection. */

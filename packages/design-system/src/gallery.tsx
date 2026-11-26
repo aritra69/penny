@@ -28,6 +28,8 @@ import { SelectRow } from "./components/select-row";
 import { StatBox } from "./components/stat-box";
 import { StatusRow } from "./components/status-row";
 import { StepList } from "./components/step-list";
+import { Mark } from "./components/mark";
+import { Timeline } from "./components/timeline";
 import { Stepper } from "./components/stepper";
 import { PENNY_TABS, TabBar } from "./components/tab-bar";
 import { Text } from "./components/text";
@@ -476,6 +478,35 @@ export function DesignSystemGallery() {
             </View>
           </Section>
 
+          <Section title="Timeline and mark">
+            <Mark>2 days left in your free month</Mark>
+            <Timeline
+              label="How your free month works"
+              items={[
+                {
+                  when: "Today · 23 Nov",
+                  title: "Everything unlocks",
+                  description: "Penny starts sorting your bank and UPI messages right away.",
+                  icon: "lock",
+                  tone: "done",
+                },
+                {
+                  when: "Day 28 · 21 Dec",
+                  title: "We remind you",
+                  description: "A notification two days before your free month ends.",
+                  icon: "bell",
+                  tone: "next",
+                },
+                {
+                  when: "Day 30 · 23 Dec",
+                  title: "₹149 a month starts",
+                  description: "Cancel any time before and you pay nothing.",
+                  icon: "card",
+                  tone: "later",
+                },
+              ]}
+            />
+          </Section>
           <Section title="Onboarding steps" bleed>
             <View className="bg-primary px-gutter py-8">
               <StepList
