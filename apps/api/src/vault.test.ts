@@ -37,4 +37,11 @@ describe("vault", () => {
   test("rejects a short key", () => {
     expect(() => createVault(Buffer.alloc(16).toString("base64"))).toThrow();
   });
+
+  test("fingerprints are stable per user, differ across users and don't show the value", () => {
+    const ref = "432198765012";
+    expect(vault.fingerprint("alice", ref)).toBe(vault.fingerprint("alice", ref));
+    expect(vault.fingerprint("bob", ref)).not.toBe(vault.fingerprint("alice", ref));
+    expect(vault.fingerprint("alice", ref)).not.toContain(ref);
+  });
 });
