@@ -15,7 +15,9 @@ import {
   trialDates,
 } from "@/lib/trial";
 import { useAppNavigation } from "@/src/navigation/types";
-import { Button, colors, Icon, Text, Timeline } from "@repo/design-system";
+import { Button, cn, colors, Icon, Text, Timeline } from "@repo/design-system";
+
+const HEADLINE = "font-display text-[32px] leading-[37px] tracking-[-0.6px]";
 
 /**
  * Step 1: the free-month paywall. Penny Plus is a free month, then ₹149 a month through Google
@@ -99,12 +101,10 @@ export default function PlanScreen() {
       <IllustrationSlot height={170} className="mt-1" />
 
       <View className="gap-2.5 px-gutter pt-4">
-        <Text
-          role="heading"
-          aria-level={1}
-          className="font-display text-[32px] leading-[37px] tracking-[-0.6px]"
-        >
-          Try Penny free for a <Text className="bg-highlight font-display">whole month</Text>
+        <Text role="heading" aria-level={1} className={HEADLINE}>
+          Try Penny free for a{" "}
+          {/* Nested Text gets Text's own base size, so it repeats the headline's. */}
+          <Text className={cn(HEADLINE, "bg-highlight")}>whole month</Text>
         </Text>
         <Text>
           Every feature, no limits. Then {price}, {dailyPrice()}.
